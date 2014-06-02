@@ -1,8 +1,20 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ngame.MainActivity"
-    tools:ignore="MergeRootFrame" />
+    android:background="@color/White"
+    tools:context="com.ngame.activites.MainActivity" >
 
+    <fr.castorflex.android.flipimageview.library.FlipImageView
+        android:id="@+id/flipView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:scaleType="center"
+        app:flipDuration="600"
+        app:flipInterpolator="@android:anim/accelerate_interpolator"
+        app:flipRotations="x"
+        app:reverseRotation="true" />
+
+</RelativeLayout>
