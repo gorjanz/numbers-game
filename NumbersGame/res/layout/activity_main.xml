@@ -8,11 +8,29 @@
     android:orientation="vertical"
     tools:context="com.ngame.activites.MainActivity" >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top" >
+
+        <TextView
+            android:id="@+id/points"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="26sp"
+            android:textColorHint="@color/Red"
+            android:textColor="@color/Red"
+            android:background="@color/White"
+            android:hint="@string/startingPoints"
+            android:layout_gravity="top|right" >
+        </TextView>
+    </LinearLayout>
+
     <Button
         android:id="@+id/buttonUp"
         android:layout_width="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:background="@drawable/arrow_up" />
 
     <LinearLayout

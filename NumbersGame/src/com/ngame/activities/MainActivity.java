@@ -2,6 +2,7 @@ package com.ngame.activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Display;
@@ -11,6 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ngame.R;
@@ -32,6 +34,8 @@ public class MainActivity extends Activity {
 	private FlipImageView flipView4;
 	private FlipImageView flipView5;
 
+	private TextView points;
+	
 	private Button allUp;
 	private Button allDown;
 	
@@ -180,6 +184,7 @@ public class MainActivity extends Activity {
 		
 		allUp = (Button) findViewById(R.id.buttonUp);
 		allDown = (Button) findViewById(R.id.buttonDown);
+		points = (TextView) findViewById(R.id.points);
 		
 		allUp.setOnClickListener(new View.OnClickListener() {
 			
@@ -203,6 +208,9 @@ public class MainActivity extends Activity {
 			}
 		});
 
+		Typeface tf = Typeface.createFromAsset(getAssets(),
+	            "fonts/Origicide.ttf");
+		points.setTypeface(tf);
 		
 	}
 	
