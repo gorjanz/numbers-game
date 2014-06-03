@@ -16,6 +16,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ngame.R;
+import com.ngame.factories.Level5Factory;
+import com.ngame.factories.LevelFactory;
+import com.ngame.models.Level;
+import com.ngame.utils.EndOfLevelException;
 import com.ngame.utils.OnSwipeTouchListener;
 
 import fr.castorflex.android.flipimageview.library.FlipImageView;
@@ -35,9 +39,11 @@ public class MainActivity extends Activity {
 	private FlipImageView flipView5;
 
 	private TextView points;
+	private int currentLevel;
 	
 	private Button allUp;
 	private Button allDown;
+	private LevelFactory levelFactory;
 	
 	private Drawable[] drawables;
 
@@ -49,10 +55,20 @@ public class MainActivity extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_main);
-
+		currentLevel = 0;
+		
+		levelFactory = new Level5Factory(getApplicationContext());
+		Level level = null;
+		try {
+			level = levelFactory.getLevel(currentLevel);
+		} catch (EndOfLevelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		initializeDrawables();
-		initializeFlipViews("12345");
 		initializeButtons();
+		initializeFlipViews(level.getGameNum());
 	}
 
 	private void initializeFlipViews(String num) {
