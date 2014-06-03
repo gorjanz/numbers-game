@@ -225,6 +225,7 @@ public class MainActivity extends Activity {
 			}
 			flipView1.toggleFlip();
 			break;
+			
 		case 2:
 			if(up){
 				currentDigit2++;
