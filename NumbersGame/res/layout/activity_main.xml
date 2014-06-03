@@ -1,20 +1,87 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/White"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
     tools:context="com.ngame.activites.MainActivity" >
 
-    <fr.castorflex.android.flipimageview.library.FlipImageView
-        android:id="@+id/flipView1"
+    <Button
+        android:id="@+id/buttonUp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:scaleType="center"
-        app:flipDuration="600"
-        app:flipInterpolator="@android:anim/accelerate_interpolator"
-        app:flipRotations="x"
-        app:reverseRotation="true" />
+        android:background="@color/White"
+        android:drawableTop="@drawable/arrow_up" />
 
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/White"
+        android:orientation="horizontal" >
+
+        <fr.castorflex.android.flipimageview.library.FlipImageView
+            android:id="@+id/flipView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:scaleType="center"
+            app:flipDuration="600"
+            app:flipInterpolator="@android:anim/accelerate_interpolator"
+            app:flipRotations="x"
+            app:reverseRotation="true" />
+
+        <fr.castorflex.android.flipimageview.library.FlipImageView
+            android:id="@+id/flipView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:scaleType="center"
+            app:flipDuration="600"
+            app:flipInterpolator="@android:anim/accelerate_interpolator"
+            app:flipRotations="x"
+            app:reverseRotation="true" />
+
+        <fr.castorflex.android.flipimageview.library.FlipImageView
+            android:id="@+id/flipView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:scaleType="center"
+            app:flipDuration="600"
+            app:flipInterpolator="@android:anim/accelerate_interpolator"
+            app:flipRotations="x"
+            app:reverseRotation="true" />
+
+        <fr.castorflex.android.flipimageview.library.FlipImageView
+            android:id="@+id/flipView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:scaleType="center"
+            app:flipDuration="600"
+            app:flipInterpolator="@android:anim/accelerate_interpolator"
+            app:flipRotations="x"
+            app:reverseRotation="true" />
+
+        <fr.castorflex.android.flipimageview.library.FlipImageView
+            android:id="@+id/flipView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:scaleType="center"
+            app:flipDuration="600"
+            app:flipInterpolator="@android:anim/accelerate_interpolator"
+            app:flipRotations="x"
+            app:reverseRotation="true" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonDown"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/White"
+        android:drawableBottom="@drawable/arrow_down" />
+
+</LinearLayout>
