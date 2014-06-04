@@ -152,50 +152,60 @@ public class MainActivity extends Activity {
 		OnSwipeTouchListener listener1 = new OnSwipeTouchListener(ctx) {
 			public void onSwipeTop() {
 				flip(1, true);
+				movesUsed++;
 			}
 
 			public void onSwipeBottom() {
 				flip(1, false);
+				movesUsed++;
 			}
 			
 		};
 		OnSwipeTouchListener listener2 = new OnSwipeTouchListener(ctx){
 			public void onSwipeTop() {
 				flip(2, true);
+				movesUsed++;
 			}
 
 			public void onSwipeBottom() {
 				flip(2, false);
+				movesUsed++;
 			}
 
 		};
 		OnSwipeTouchListener listener3 = new OnSwipeTouchListener(ctx){
 			public void onSwipeTop() {
 				flip(3, true);
+				movesUsed++;
 			}
 
 			public void onSwipeBottom() {
 				flip(3, false);
+				movesUsed++;
 			}
 
 		};
 		OnSwipeTouchListener listener4 = new OnSwipeTouchListener(ctx) {
 			public void onSwipeTop() {
 				flip(4, true);
+				movesUsed++;
 			}
 
 			public void onSwipeBottom() {
 				flip(4, false);
+				movesUsed++;
 			}
 
 		};
 		OnSwipeTouchListener listener5 = new OnSwipeTouchListener(ctx){
 			public void onSwipeTop() {
 				flip(5, true);
+				movesUsed++;
 			}
 
 			public void onSwipeBottom() {
 				flip(5, false);
+				movesUsed++;
 			}
 
 		};
@@ -407,8 +417,6 @@ public class MainActivity extends Activity {
 			
 			break;
 		}
-		
-		movesUsed++;
 		
 		String flipViewsNumber = flipToString();
 		if(gameOver(flipViewsNumber)){
