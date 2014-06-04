@@ -520,7 +520,7 @@ public class MainActivity extends Activity {
 				if(currentRun>bestRun)
 					bestRun = currentRun;
 			} else {
-				currentRun = 1;
+				currentRun = 0;
 				//Toast.makeText(getApplicationContext(), "movesUsed: " + movesUsed, Toast.LENGTH_LONG).show();
 				//Toast.makeText(getApplicationContext(), "minMoves: " + playingLevel.getMinMoves(), Toast.LENGTH_LONG).show();
 				Toast.makeText(getApplicationContext(), "Level solved with " + (movesUsed-playingLevel.getMinMoves()) + " extra transformations!", Toast.LENGTH_LONG).show();
