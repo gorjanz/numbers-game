@@ -67,6 +67,7 @@ public class StartUpActivity extends Activity {
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, height/30);
 		params.gravity = Gravity.CENTER;
 		parms.bottomMargin = 15;
+		parms.topMargin = 15;
 		tv1.setLayoutParams(params);
 		tv2.setLayoutParams(params);
 

@@ -34,7 +34,7 @@ public class TimeBattleModeActivity extends Activity {
 
 	public static final String TAG = "TimeBattleModeActivity";
 	public static final String LEVELS_SOLVED = "LEVELS_SOLVED";
-	private static final Integer TIMER_LENGTH = 20;
+	private static final Integer TIMER_LENGTH = 90;
 
 	private Integer currentDigit1;
 	private Integer currentDigit2;
@@ -304,7 +304,7 @@ public class TimeBattleModeActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 
-				//timer.cancel();
+				timer.cancel();
 				saveGameState();
 				saveUIState();
 				finish();
