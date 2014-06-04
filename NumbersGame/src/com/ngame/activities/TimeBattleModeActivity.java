@@ -1,7 +1,5 @@
 package com.ngame.activities;
 
-import java.util.concurrent.TimeUnit;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -25,14 +23,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ngame.R;
-import com.ngame.factories.Level1Factory;
-import com.ngame.factories.Level2Factory;
-import com.ngame.factories.Level3Factory;
-import com.ngame.factories.Level4Factory;
-import com.ngame.factories.Level5Factory;
 import com.ngame.factories.LevelFactory;
+import com.ngame.factories.TimerLevelsFactory;
 import com.ngame.models.Level;
-import com.ngame.utils.EndOfLevelException;
 import com.ngame.utils.OnSwipeTouchListener;
 
 import fr.castorflex.android.flipimageview.library.FlipImageView;
@@ -41,7 +34,7 @@ public class TimeBattleModeActivity extends Activity {
 
 	public static final String TAG = "TimeBattleModeActivity";
 	public static final String LEVELS_SOLVED = "LEVELS_SOLVED";
-	public static final String TIME = "1:30";
+	private static final Integer TIMER_LENGTH = 20;
 
 	private Integer currentDigit1;
 	private Integer currentDigit2;
@@ -60,8 +53,6 @@ public class TimeBattleModeActivity extends Activity {
 	private ImageView backButton;
 	private ImageView nextLevelButton;
 
-	private int currentLevel;
-	private int currentDifficulty;
 	private int levelsSolved;
 	private int movesUsed;
 
@@ -70,7 +61,7 @@ public class TimeBattleModeActivity extends Activity {
 
 	private Button allUp;
 	private Button allDown;
-	private LevelFactory levelFactory;
+	private TimerLevelsFactory levelFactory;
 	private Level playingLevel;
 
 	private Drawable[] drawables;
@@ -93,14 +84,14 @@ public class TimeBattleModeActivity extends Activity {
 		loadGameState();
 
 		initializeDrawables();
-		levelFactory = getFactory(currentDifficulty);
+		levelFactory = new TimerLevelsFactory(getApplicationContext());
 		playingLevel = null;
 		nextLevel();
 		initializeViews();
 
 		loadUIState();
 		
-		timer = new CountDownTimer(90000, 1000) { // adjust the milli seconds here
+		timer = new CountDownTimer(TIMER_LENGTH*1000, 1000) { // adjust the milli seconds here
 
 	        public void onTick(long millisUntilFinished) {
 	        	
@@ -313,11 +304,12 @@ public class TimeBattleModeActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 
-				timer.cancel();
+				//timer.cancel();
 				saveGameState();
 				saveUIState();
 				finish();
 
+				
 			}
 		});
 
@@ -336,7 +328,6 @@ public class TimeBattleModeActivity extends Activity {
 		targetNumber.setTypeface(tf);
 		targetNumber.setText("Target: " + playingLevel.getTargetNum());
 		timerView.setTypeface(tf);
-		timerView.setText(TIME);
 		
 		targetNumber.requestLayout();
 		backButton.requestLayout();
@@ -442,26 +433,12 @@ public class TimeBattleModeActivity extends Activity {
 	}
 
 	private void nextLevel() {
-		currentLevel++;
-		try {
-			playingLevel = levelFactory.getLevel(currentLevel);
-
-		} catch (EndOfLevelException e) {
-			currentDifficulty++;
-			levelFactory = getFactory(currentDifficulty);
-			try {
-				playingLevel = levelFactory.getLevel(currentLevel);
-			} catch (EndOfLevelException e1) {
-				Toast.makeText(getApplicationContext(),
-						LevelFactory.WINNER_SALUTE, Toast.LENGTH_LONG).show();
-			}
-
-		}
+		
+		playingLevel = levelFactory.getLevel();
 
 		try {
 			Thread.sleep(750);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		setFlipViewsDrawables(playingLevel.getGameNum());
@@ -502,32 +479,6 @@ public class TimeBattleModeActivity extends Activity {
 		targetNumber.setText("Target: " + playingLevel.getTargetNum());
 	}
 
-	private LevelFactory getFactory(int i) {
-		LevelFactory factory = null;
-		switch (i) {
-		case 1:
-			factory = new Level1Factory(getApplicationContext());
-			break;
-
-		case 2:
-			factory = new Level2Factory(getApplicationContext());
-			break;
-
-		case 3:
-			factory = new Level3Factory(getApplicationContext());
-			break;
-
-		case 4:
-			factory = new Level4Factory(getApplicationContext());
-			break;
-
-		default:
-			factory = new Level5Factory(getApplicationContext());
-			break;
-		}
-		return factory;
-	}
-
 	private void checkGameOver() {
 
 		movesUsed++;
@@ -555,12 +506,12 @@ public class TimeBattleModeActivity extends Activity {
 
 		SharedPreferences.Editor prefsEditor = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext()).edit();
-		prefsEditor.putInt(ClassicModeActivity.CURRENT_DIFFICULTY, currentDifficulty);
-		prefsEditor.putInt(ClassicModeActivity.CURRENT_LEVEL, currentLevel);
-		prefsEditor.putInt(LEVELS_SOLVED, levelsSolved);
+		//prefsEditor.putInt(LEVELS_SOLVED, levelsSolved);
 		prefsEditor.putInt(ClassicModeActivity.CURRENT_NUMBER_OF_MOVES, movesUsed);
 		prefsEditor.commit();
-
+		// implement timer stop
+		//timer.cancel();
+		
 	}
 
 	private void saveUIState() {
@@ -576,11 +527,10 @@ public class TimeBattleModeActivity extends Activity {
 
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
-		currentDifficulty = prefs.getInt(ClassicModeActivity.CURRENT_DIFFICULTY, 1);
-		currentLevel = prefs.getInt(ClassicModeActivity.CURRENT_LEVEL, -1);
 		levelsSolved = prefs.getInt(LEVELS_SOLVED, 0);
 		movesUsed = prefs.getInt(ClassicModeActivity.CURRENT_NUMBER_OF_MOVES, 0);
 
+		// implement timer continue
 	}
 
 	private void loadUIState() {

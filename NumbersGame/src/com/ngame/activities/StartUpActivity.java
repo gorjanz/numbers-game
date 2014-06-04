@@ -21,7 +21,6 @@ public class StartUpActivity extends Activity {
 
 	private ImageView classicMode;
 	private ImageView timeBattleMode;
-	private ImageView randomMode;
 	private ImageView settings;
 	private ImageView achievments;
 
@@ -42,7 +41,6 @@ public class StartUpActivity extends Activity {
 
 		classicMode = (ImageView) findViewById(R.id.classicMode);
 		timeBattleMode = (ImageView) findViewById(R.id.timeBattleMode);
-		randomMode = (ImageView) findViewById(R.id.randomMode);
 		settings = (ImageView) findViewById(R.id.settings);
 		achievments = (ImageView) findViewById(R.id.achievments);
 
@@ -53,9 +51,6 @@ public class StartUpActivity extends Activity {
 		tv1.setTypeface(tf);
 		TextView tv2 = (TextView) findViewById(R.id.timeBattleModeTV);
 		tv2.setTypeface(tf);
-		TextView tv3 = (TextView) findViewById(R.id.randomModeTV);
-		tv3.setTypeface(tf);
-		
 		
 		Display display = getWindowManager().getDefaultDisplay();
 		int width = display.getWidth();
@@ -65,16 +60,15 @@ public class StartUpActivity extends Activity {
 		parms.gravity = Gravity.CENTER;
 		parms.bottomMargin = 5;
 		parms.topMargin = 5;
-
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, height/30);
-		params.gravity = Gravity.CENTER;
-		tv1.setLayoutParams(params);
-		tv2.setLayoutParams(params);
-		tv3.setLayoutParams(params);
 		
 		classicMode.setLayoutParams(parms);
 		timeBattleMode.setLayoutParams(parms);
-		randomMode.setLayoutParams(parms);
+		
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, height/30);
+		params.gravity = Gravity.CENTER;
+		parms.bottomMargin = 15;
+		tv1.setLayoutParams(params);
+		tv2.setLayoutParams(params);
 
 		LinearLayout.LayoutParams smallParams = new LinearLayout.LayoutParams(width / 8, height / 10);
 		parms.leftMargin = 6;
@@ -104,15 +98,6 @@ public class StartUpActivity extends Activity {
 			}
 		});
 
-		randomMode.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
 		settings.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -133,12 +118,10 @@ public class StartUpActivity extends Activity {
 
 		classicMode.requestLayout();
 		timeBattleMode.requestLayout();
-		randomMode.requestLayout();
 		settings.requestLayout();
 		achievments.requestLayout();
 		tv1.requestLayout();
 		tv2.requestLayout();
-		tv3.requestLayout();
 	}
 
 }
