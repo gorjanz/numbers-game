@@ -50,7 +50,6 @@ public class Level {
 		sb.append(targetNum);
 		return sb.toString();
 	}
-	
 
 	@Override
 	public boolean equals(Object obj) {

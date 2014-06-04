@@ -152,60 +152,60 @@ public class MainActivity extends Activity {
 		OnSwipeTouchListener listener1 = new OnSwipeTouchListener(ctx) {
 			public void onSwipeTop() {
 				flip(1, true);
-				movesUsed++;
+				checkGameOver();
 			}
 
 			public void onSwipeBottom() {
 				flip(1, false);
-				movesUsed++;
+				checkGameOver();
 			}
 			
 		};
 		OnSwipeTouchListener listener2 = new OnSwipeTouchListener(ctx){
 			public void onSwipeTop() {
 				flip(2, true);
-				movesUsed++;
+				checkGameOver();
 			}
 
 			public void onSwipeBottom() {
 				flip(2, false);
-				movesUsed++;
+				checkGameOver();
 			}
 
 		};
 		OnSwipeTouchListener listener3 = new OnSwipeTouchListener(ctx){
 			public void onSwipeTop() {
 				flip(3, true);
-				movesUsed++;
+				checkGameOver();
 			}
 
 			public void onSwipeBottom() {
 				flip(3, false);
-				movesUsed++;
+				checkGameOver();
 			}
 
 		};
 		OnSwipeTouchListener listener4 = new OnSwipeTouchListener(ctx) {
 			public void onSwipeTop() {
 				flip(4, true);
-				movesUsed++;
+				checkGameOver();
 			}
 
 			public void onSwipeBottom() {
 				flip(4, false);
-				movesUsed++;
+				checkGameOver();
 			}
 
 		};
 		OnSwipeTouchListener listener5 = new OnSwipeTouchListener(ctx){
 			public void onSwipeTop() {
 				flip(5, true);
-				movesUsed++;
+				checkGameOver();
 			}
 
 			public void onSwipeBottom() {
 				flip(5, false);
-				movesUsed++;
+				checkGameOver();
 			}
 
 		};
@@ -268,7 +268,7 @@ public class MainActivity extends Activity {
 				for (int i = 1; i <= 5; i++) {
 					flip(i, true);
 				}
-				movesUsed++;
+				checkGameOver();
 			}
 			
 		});
@@ -280,7 +280,7 @@ public class MainActivity extends Activity {
 				for (int i = 1; i <= 5; i++) {
 					flip(i, false);
 				}
-				movesUsed++;
+				checkGameOver();
 			}
 		});
 
@@ -417,20 +417,7 @@ public class MainActivity extends Activity {
 			
 			break;
 		}
-		
-		String flipViewsNumber = flipToString();
-		if(gameOver(flipViewsNumber)){
-			if(movesUsed==playingLevel.getMinMoves()){
-				Toast.makeText(getApplicationContext(), LevelFactory.SOLVED_LEVEL_SALUTE, Toast.LENGTH_LONG).show();
-				currentRun++;
-				if(currentRun>bestRun)
-					bestRun = currentRun;
-			} else {
-				currentRun = 1;
-				Toast.makeText(getApplicationContext(), "Level solved with " + (movesUsed-playingLevel.getMinMoves()) + " extra transformations!", Toast.LENGTH_LONG).show();
-			}
-			
-		}
+
 	}
 	
 	private void nextLevel(){
@@ -521,11 +508,27 @@ public class MainActivity extends Activity {
 		return factory;
 	}
 	
-	private boolean gameOver(String flipViewsNumber){
-		if(flipViewsNumber.equals(playingLevel.getTargetNum()))
-			return true;
-		return false;
+	private void checkGameOver(){
+		
+		movesUsed++;
+		
+		String flipViewsNumber = flipToString();
+		if(flipViewsNumber.equals(playingLevel.getTargetNum())){
+			if(movesUsed==playingLevel.getMinMoves()){
+				Toast.makeText(getApplicationContext(), LevelFactory.SOLVED_LEVEL_SALUTE, Toast.LENGTH_LONG).show();
+				currentRun++;
+				if(currentRun>bestRun)
+					bestRun = currentRun;
+			} else {
+				currentRun = 1;
+				//Toast.makeText(getApplicationContext(), "movesUsed: " + movesUsed, Toast.LENGTH_LONG).show();
+				//Toast.makeText(getApplicationContext(), "minMoves: " + playingLevel.getMinMoves(), Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), "Level solved with " + (movesUsed-playingLevel.getMinMoves()) + " extra transformations!", Toast.LENGTH_LONG).show();
+				//Toast.makeText(getApplicationContext(), playingLevel.getSolution(), Toast.LENGTH_LONG).show();
+			}
+		}
 	}
+	
 	
 	private void saveGameState(){
 	
