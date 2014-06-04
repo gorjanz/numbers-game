@@ -25,7 +25,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.ngame.activities.MainActivity"
+            android:name="com.ngame.activities.ClassicModeActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.ngame.activities.TimeBattleModeActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
         </activity>

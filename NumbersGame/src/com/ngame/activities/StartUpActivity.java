@@ -88,7 +88,7 @@ public class StartUpActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent launchClassicModeGame = new Intent(
-						getApplicationContext(), MainActivity.class);
+						getApplicationContext(), ClassicModeActivity.class);
 				startActivity(launchClassicModeGame);
 			}
 		});
@@ -97,7 +97,9 @@ public class StartUpActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
+				Intent launchTimeBattleModeGame = new Intent(
+						getApplicationContext(), TimeBattleModeActivity.class);
+				startActivity(launchTimeBattleModeGame);
 
 			}
 		});

@@ -34,7 +34,7 @@ import com.ngame.utils.OnSwipeTouchListener;
 
 import fr.castorflex.android.flipimageview.library.FlipImageView;
 
-public class MainActivity extends Activity {
+public class ClassicModeActivity extends Activity {
 
 	public static final String TAG = "MainActvity";
 	public static final String CURRENT_LEVEL = "CURRENT_LEVEL";
