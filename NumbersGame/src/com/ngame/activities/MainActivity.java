@@ -2,20 +2,30 @@ package com.ngame.activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ngame.R;
+import com.ngame.factories.Level1Factory;
+import com.ngame.factories.Level2Factory;
+import com.ngame.factories.Level3Factory;
+import com.ngame.factories.Level4Factory;
 import com.ngame.factories.Level5Factory;
 import com.ngame.factories.LevelFactory;
 import com.ngame.models.Level;
@@ -26,6 +36,14 @@ import fr.castorflex.android.flipimageview.library.FlipImageView;
 
 public class MainActivity extends Activity {
 
+	public static final String TAG = "MainActvity";
+	public static final String CURRENT_LEVEL = "CURRENT_LEVEL";
+	public static final String CURRENT_DIFFICULTY = "CURRENT_DIFFICULTY";
+	public static final String CURRENT_RUN = "CURRENT_RUN";
+	public static final String BEST_RUN = "BEST_RUN";
+	public static final String CURRENT_FLIP_NUMBER = "CURRENT_FLIP_NUMBER";
+	public static final String CURRENT_NUMBER_OF_MOVES = "CURRENT_NUMBER_OF_MOVES";
+	
 	private Integer currentDigit1;
 	private Integer currentDigit2;
 	private Integer currentDigit3;
@@ -38,12 +56,25 @@ public class MainActivity extends Activity {
 	private FlipImageView flipView4;
 	private FlipImageView flipView5;
 
-	private TextView points;
+	private TextView currentRunTV;
+	private TextView bestRunTV;
+	private TextView targetNumber;
+	private ImageView backButton;
+	private ImageView nextLevelButton;
+	
 	private int currentLevel;
+	private int currentDifficulty;
+	private int currentRun;
+	private int bestRun;
+	private int movesUsed;
+	
+	private int screenWidth;
+	private int screenHeight;
 	
 	private Button allUp;
 	private Button allDown;
 	private LevelFactory levelFactory;
+	private Level playingLevel;
 	
 	private Drawable[] drawables;
 
@@ -55,48 +86,61 @@ public class MainActivity extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_main);
-		currentLevel = 0;
 		
-		levelFactory = new Level5Factory(getApplicationContext());
-		Level level = null;
-		try {
-			level = levelFactory.getLevel(currentLevel);
-		} catch (EndOfLevelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Display display = getWindowManager().getDefaultDisplay();
+		screenWidth = display.getWidth();
+		screenHeight = display.getHeight();
+		initializeFlipViews();
+		
+		loadGameState();
 		
 		initializeDrawables();
-		initializeButtons();
-		initializeFlipViews(level.getGameNum());
+		levelFactory = getFactory(currentDifficulty);
+		playingLevel = null;
+		nextLevel();
+		initializeViews();
+		
+		
+		loadUIState();
+		
+		//setFlipViewsDrawables(playingLevel.getGameNum());
 	}
 
-	private void initializeFlipViews(String num) {
-
-		currentDigit1 = Integer.parseInt(num.charAt(0) + "");
-		currentDigit2 = Integer.parseInt(num.charAt(1) + "");
-		currentDigit3 = Integer.parseInt(num.charAt(2) + "");
-		currentDigit4 = Integer.parseInt(num.charAt(3) + "");
-		currentDigit5 = Integer.parseInt(num.charAt(4) + "");
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+		saveGameState();
+		saveUIState();
+		
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		
+		loadGameState();
+		loadUIState();
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		saveGameState();
+		saveUIState();
+	}
+	
+	private void initializeFlipViews() {
 
 		Context ctx = getApplicationContext();
 		
-		Display display = getWindowManager().getDefaultDisplay();
-		int width = display.getWidth();
-		int height = display.getHeight();
-		
 		flipView1 = (FlipImageView) findViewById(R.id.flipView1);
-		flipView1.setDrawable(drawables[currentDigit1]);
 		flipView2 = (FlipImageView) findViewById(R.id.flipView2);
-		flipView2.setDrawable(drawables[currentDigit2]);
 		flipView3 = (FlipImageView) findViewById(R.id.flipView3);
-		flipView3.setDrawable(drawables[currentDigit3]);
 		flipView4 = (FlipImageView) findViewById(R.id.flipView4);
-		flipView4.setDrawable(drawables[currentDigit4]);
 		flipView5 = (FlipImageView) findViewById(R.id.flipView5);
-		flipView5.setDrawable(drawables[currentDigit5]);
 		
-		LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(width/5,height/3);
+		LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(screenWidth/5,screenHeight/3);
 		parms.gravity = Gravity.CENTER_VERTICAL;
 		 
 		flipView1.setLayoutParams(parms);
@@ -107,60 +151,50 @@ public class MainActivity extends Activity {
 
 		OnSwipeTouchListener listener1 = new OnSwipeTouchListener(ctx) {
 			public void onSwipeTop() {
-				Toast.makeText(MainActivity.this, "top", Toast.LENGTH_SHORT).show();
 				flip(1, true);
 			}
 
 			public void onSwipeBottom() {
-				Toast.makeText(MainActivity.this, "bottom", Toast.LENGTH_SHORT).show();
 				flip(1, false);
 			}
-
+			
 		};
 		OnSwipeTouchListener listener2 = new OnSwipeTouchListener(ctx){
 			public void onSwipeTop() {
-				Toast.makeText(MainActivity.this, "top", Toast.LENGTH_SHORT).show();
 				flip(2, true);
 			}
 
 			public void onSwipeBottom() {
-				Toast.makeText(MainActivity.this, "bottom", Toast.LENGTH_SHORT).show();
 				flip(2, false);
 			}
 
 		};
 		OnSwipeTouchListener listener3 = new OnSwipeTouchListener(ctx){
 			public void onSwipeTop() {
-				Toast.makeText(MainActivity.this, "top", Toast.LENGTH_SHORT).show();
 				flip(3, true);
 			}
 
 			public void onSwipeBottom() {
-				Toast.makeText(MainActivity.this, "bottom", Toast.LENGTH_SHORT).show();
 				flip(3, false);
 			}
 
 		};
 		OnSwipeTouchListener listener4 = new OnSwipeTouchListener(ctx) {
 			public void onSwipeTop() {
-				Toast.makeText(MainActivity.this, "top", Toast.LENGTH_SHORT).show();
 				flip(4, true);
 			}
 
 			public void onSwipeBottom() {
-				Toast.makeText(MainActivity.this, "bottom", Toast.LENGTH_SHORT).show();
 				flip(4, false);
 			}
 
 		};
 		OnSwipeTouchListener listener5 = new OnSwipeTouchListener(ctx){
 			public void onSwipeTop() {
-				Toast.makeText(MainActivity.this, "top", Toast.LENGTH_SHORT).show();
 				flip(5, true);
 			}
 
 			public void onSwipeBottom() {
-				Toast.makeText(MainActivity.this, "bottom", Toast.LENGTH_SHORT).show();
 				flip(5, false);
 			}
 
@@ -196,11 +230,26 @@ public class MainActivity extends Activity {
 
 	}
 	
-	private void initializeButtons(){
+	private void initializeViews(){
 		
 		allUp = (Button) findViewById(R.id.buttonUp);
 		allDown = (Button) findViewById(R.id.buttonDown);
-		points = (TextView) findViewById(R.id.points);
+		currentRunTV = (TextView) findViewById(R.id.currentRun);
+		bestRunTV = (TextView) findViewById(R.id.bestRun);
+		targetNumber = (TextView) findViewById(R.id.targetNumberTextView);
+		backButton = (ImageView) findViewById(R.id.back);
+		nextLevelButton = (ImageView) findViewById(R.id.nextLevel);
+		Bitmap nextLevelIcon = BitmapFactory.decodeResource(getResources(), R.drawable.back_button_icon);
+		Matrix matrix = new Matrix();
+		matrix.postRotate(180);
+		nextLevelIcon = Bitmap.createBitmap(nextLevelIcon, 0, 0, nextLevelIcon.getWidth(), nextLevelIcon.getHeight(), matrix, true);
+		nextLevelButton.setImageBitmap(nextLevelIcon);
+		
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(screenWidth/5, screenHeight/10);
+		params.gravity = Gravity.LEFT;
+		backButton.setLayoutParams(params);
+		params.gravity = Gravity.RIGHT;
+		nextLevelButton.setLayoutParams(params);
 		
 		allUp.setOnClickListener(new View.OnClickListener() {
 			
@@ -209,6 +258,7 @@ public class MainActivity extends Activity {
 				for (int i = 1; i <= 5; i++) {
 					flip(i, true);
 				}
+				movesUsed++;
 			}
 			
 		});
@@ -220,14 +270,45 @@ public class MainActivity extends Activity {
 				for (int i = 1; i <= 5; i++) {
 					flip(i, false);
 				}
-
+				movesUsed++;
 			}
 		});
 
+		backButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				saveGameState();
+				saveUIState();
+				finish();
+				
+			}
+		});
+		
+		nextLevelButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				nextLevel();
+				updateViews();
+				//saveGameState();
+			}
+		});
+		
 		Typeface tf = Typeface.createFromAsset(getAssets(),
 	            "fonts/Origicide.ttf");
-		points.setTypeface(tf);
+		currentRunTV.setTypeface(tf);
+		bestRunTV.setTypeface(tf);
+		targetNumber.setTypeface(tf);
+		targetNumber.setText("Target: " + playingLevel.getTargetNum());
+		currentRunTV.setText("Current: " + Integer.toString(currentRun));
+		bestRunTV.setText("Best: " + Integer.toString(bestRun));
 		
+		currentRunTV.requestLayout();
+		bestRunTV.requestLayout();
+		targetNumber.requestLayout();
+		backButton.requestLayout();
 	}
 	
 	private void flip(int whichDigit, boolean up){
@@ -327,7 +408,168 @@ public class MainActivity extends Activity {
 			break;
 		}
 		
-		//check if game-over
+		movesUsed++;
+		
+		String flipViewsNumber = flipToString();
+		if(gameOver(flipViewsNumber)){
+			if(movesUsed==playingLevel.getMinMoves()){
+				Toast.makeText(getApplicationContext(), LevelFactory.SOLVED_LEVEL_SALUTE, Toast.LENGTH_LONG).show();
+				currentRun++;
+				if(currentRun>bestRun)
+					bestRun = currentRun;
+			} else {
+				currentRun = 1;
+				Toast.makeText(getApplicationContext(), "Level solved with " + (movesUsed-playingLevel.getMinMoves()) + " extra transformations!", Toast.LENGTH_LONG).show();
+			}
+			
+		}
+	}
+	
+	private void nextLevel(){
+		currentLevel++;
+		try{
+			playingLevel = levelFactory.getLevel(currentLevel);
+			
+		} catch(EndOfLevelException e){
+			currentDifficulty++;
+			levelFactory = getFactory(currentDifficulty);
+			try {
+				playingLevel = levelFactory.getLevel(currentLevel);
+			} catch (EndOfLevelException e1) {
+				Toast.makeText(getApplicationContext(), LevelFactory.WINNER_SALUTE, Toast.LENGTH_LONG).show();
+			}
+			
+		}
+		
+		try {
+			Thread.sleep(750);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		setFlipViewsDrawables(playingLevel.getGameNum());
+		movesUsed = 0;
+	}
+	
+	private String flipToString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append(Integer.toString(currentDigit1));
+		sb.append(Integer.toString(currentDigit2));
+		sb.append(Integer.toString(currentDigit3));
+		sb.append(Integer.toString(currentDigit4));
+		sb.append(Integer.toString(currentDigit5));
+		return sb.toString();
+	}
+	
+	private void setFlipViewsDrawables(String num){
+		currentDigit1 = Integer.parseInt(num.charAt(0) + "");
+		currentDigit2 = Integer.parseInt(num.charAt(1) + "");
+		currentDigit3 = Integer.parseInt(num.charAt(2) + "");
+		currentDigit4 = Integer.parseInt(num.charAt(3) + "");
+		currentDigit5 = Integer.parseInt(num.charAt(4) + "");
+		
+		flipView1.setDrawable(drawables[currentDigit1]);
+		flipView2.setDrawable(drawables[currentDigit2]);
+		flipView3.setDrawable(drawables[currentDigit3]);
+		flipView4.setDrawable(drawables[currentDigit4]);
+		flipView5.setDrawable(drawables[currentDigit5]);
+		
+		flipView1.setFlippedDrawable(drawables[currentDigit1]);
+		flipView2.setFlippedDrawable(drawables[currentDigit2]);
+		flipView3.setFlippedDrawable(drawables[currentDigit3]);
+		flipView4.setFlippedDrawable(drawables[currentDigit4]);
+		flipView5.setFlippedDrawable(drawables[currentDigit5]);
+	}
+	
+	private void updateViews() {
+		currentRunTV.setText("Current: " + Integer.toString(currentRun));
+		bestRunTV.setText("Best: " + Integer.toString(bestRun));
+		targetNumber.setText("Target: " + playingLevel.getTargetNum());
 	}
 
+	private LevelFactory getFactory(int i){
+		LevelFactory factory = null;
+		switch (i) {
+		case 1:
+			factory = new Level1Factory(getApplicationContext());
+			break;
+
+		case 2:
+			factory = new Level2Factory(getApplicationContext());
+			break;
+			
+		case 3:
+			factory = new Level3Factory(getApplicationContext());
+			break;
+			
+		case 4:
+			factory = new Level4Factory(getApplicationContext());
+			break;
+			
+		default:
+			factory = new Level5Factory(getApplicationContext());
+			break;
+		}
+		return factory;
+	}
+	
+	private boolean gameOver(String flipViewsNumber){
+		if(flipViewsNumber.equals(playingLevel.getTargetNum()))
+			return true;
+		return false;
+	}
+	
+	private void saveGameState(){
+	
+		SharedPreferences.Editor prefsEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+		prefsEditor.putInt(CURRENT_DIFFICULTY, currentDifficulty);
+		prefsEditor.putInt(CURRENT_LEVEL, currentLevel);
+		prefsEditor.putInt(CURRENT_RUN, currentRun);
+		prefsEditor.putInt(BEST_RUN, bestRun);
+		prefsEditor.putInt(CURRENT_NUMBER_OF_MOVES, movesUsed);
+		prefsEditor.commit();
+		
+	}
+	
+	private void saveUIState(){
+	
+		SharedPreferences.Editor prefsEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+		prefsEditor.putString(CURRENT_FLIP_NUMBER, flipToString());
+		prefsEditor.commit();
+		
+	}
+	
+	private void loadGameState(){
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		currentDifficulty = prefs.getInt(CURRENT_DIFFICULTY, 1);
+		currentLevel = prefs.getInt(CURRENT_LEVEL, -1);
+		currentRun = prefs.getInt(CURRENT_RUN, 0);
+		bestRun = prefs.getInt(BEST_RUN, 0);
+		movesUsed = prefs.getInt(CURRENT_NUMBER_OF_MOVES, 0);
+		
+	}
+	
+	private void loadUIState(){
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		String fNum = prefs.getString(CURRENT_FLIP_NUMBER, playingLevel.getGameNum());
+		
+		currentDigit1 = Integer.parseInt(fNum.charAt(0) + "");
+		currentDigit2 = Integer.parseInt(fNum.charAt(1) + "");
+		currentDigit3 = Integer.parseInt(fNum.charAt(2) + "");
+		currentDigit4 = Integer.parseInt(fNum.charAt(3) + "");
+		currentDigit5 = Integer.parseInt(fNum.charAt(4) + "");
+		
+		flipView1.setDrawable(drawables[currentDigit1]);
+		flipView2.setDrawable(drawables[currentDigit2]);
+		flipView3.setDrawable(drawables[currentDigit3]);
+		flipView4.setDrawable(drawables[currentDigit4]);
+		flipView5.setDrawable(drawables[currentDigit5]);
+		
+		targetNumber.setText("Target: " + playingLevel.getTargetNum());
+		currentRunTV.setText("Current: " + Integer.toString(currentRun));
+		bestRunTV.setText("Best: " + Integer.toString(bestRun));
+		
+	}
 }

@@ -11,18 +11,19 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="top" >
+        android:layout_gravity="top"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/points"
+            android:id="@+id/targetNumberTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="26sp"
+            android:hint="@string/startingTargetNumber"
+            android:textColor="@color/Black"
             android:textColorHint="@color/Red"
-            android:textColor="@color/Red"
-            android:background="@color/White"
-            android:hint="@string/startingPoints"
-            android:layout_gravity="top|right" >
+            android:textSize="50sp"
+            android:textStyle="bold" >
         </TextView>
     </LinearLayout>
 
@@ -31,12 +32,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="5dp"
         android:background="@drawable/arrow_up" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/White"
         android:orientation="horizontal" >
 
         <fr.castorflex.android.flipimageview.library.FlipImageView
@@ -44,6 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
             android:scaleType="center"
             app:flipDuration="600"
             app:flipInterpolator="@android:anim/accelerate_interpolator"
@@ -55,6 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
             android:scaleType="center"
             app:flipDuration="600"
             app:flipInterpolator="@android:anim/accelerate_interpolator"
@@ -66,6 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
             android:scaleType="center"
             app:flipDuration="600"
             app:flipInterpolator="@android:anim/accelerate_interpolator"
@@ -77,6 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
             android:scaleType="center"
             app:flipDuration="600"
             app:flipInterpolator="@android:anim/accelerate_interpolator"
@@ -88,6 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
             android:scaleType="center"
             app:flipDuration="600"
             app:flipInterpolator="@android:anim/accelerate_interpolator"
@@ -100,6 +106,44 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="5dp"
         android:background="@drawable/arrow_down" />
+
+    <TextView
+        android:id="@+id/currentRun"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="@string/startingPoints"
+        android:textColor="@color/Black"
+        android:textColorHint="@color/Red"
+        android:textSize="26sp"
+        android:textStyle="bold" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/bestRun"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/startingPoints"
+        android:textColor="@color/Black"
+        android:textColorHint="@color/Red"
+        android:textSize="26sp"
+        android:textStyle="bold" >
+    </TextView>
+
+    <ImageView
+        android:id="@+id/nextLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/back_button_icon" />
+
+    <ImageView
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/back_button_icon" />
 
 </LinearLayout>

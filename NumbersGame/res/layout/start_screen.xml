@@ -14,6 +14,17 @@
         android:background="@android:color/transparent"
         android:src="@drawable/classic_mode" />
 
+    <TextView
+        android:id="@+id/classicModeTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:textColor="@color/Black"
+        android:textStyle="bold"
+        android:text="@string/classicMode" />
+
     <ImageView
         android:id="@+id/timeBattleMode"
         android:layout_width="wrap_content"
@@ -22,6 +33,17 @@
         android:background="@android:color/transparent"
         android:src="@drawable/time_battle" />
 
+    <TextView
+        android:id="@+id/timeBattleModeTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/Black"
+        android:textStyle="bold"
+        android:text="@string/timeBattleMode" />
+
     <ImageView
         android:id="@+id/randomMode"
         android:layout_width="wrap_content"
@@ -29,6 +51,17 @@
         android:layout_gravity="center_vertical"
         android:background="@android:color/transparent"
         android:src="@drawable/random_mode" />
+
+    <TextView
+        android:id="@+id/randomModeTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/Black"
+        android:textStyle="bold"
+        android:text="@string/randomMode" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -49,6 +82,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:src="@drawable/achievments" />
+        
     </LinearLayout>
 
 </LinearLayout>

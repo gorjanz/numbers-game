@@ -42,7 +42,7 @@ public class Level3Factory extends LevelFactory {
 					break;
 				String[] nums = row.split(":");
 				LinkedList<String> steps = new LinkedList<>();
-				for (int i = 2; i < nums.length; i++) {
+				for (int i = 3; i < nums.length; i++) {
 					steps.add(nums[i]);
 				}
 				newLvl = new Level(nums[0], nums[1], steps);

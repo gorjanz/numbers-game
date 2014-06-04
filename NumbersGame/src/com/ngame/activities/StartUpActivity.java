@@ -2,6 +2,7 @@ package com.ngame.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.Gravity;
@@ -10,7 +11,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.ngame.R;
 
@@ -43,15 +46,32 @@ public class StartUpActivity extends Activity {
 		settings = (ImageView) findViewById(R.id.settings);
 		achievments = (ImageView) findViewById(R.id.achievments);
 
+		Typeface tf = Typeface.createFromAsset(getAssets(),
+	            "fonts/Origicide.ttf");
+		
+		TextView tv1 = (TextView) findViewById(R.id.classicModeTV);
+		tv1.setTypeface(tf);
+		TextView tv2 = (TextView) findViewById(R.id.timeBattleModeTV);
+		tv2.setTypeface(tf);
+		TextView tv3 = (TextView) findViewById(R.id.randomModeTV);
+		tv3.setTypeface(tf);
+		
+		
 		Display display = getWindowManager().getDefaultDisplay();
 		int width = display.getWidth();
 		int height = display.getHeight();
 
 		LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(width / 3, height / 5);
 		parms.gravity = Gravity.CENTER;
-		parms.bottomMargin = 10;
-		parms.topMargin = 10;
+		parms.bottomMargin = 5;
+		parms.topMargin = 5;
 
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, height/30);
+		params.gravity = Gravity.CENTER;
+		tv1.setLayoutParams(params);
+		tv2.setLayoutParams(params);
+		tv3.setLayoutParams(params);
+		
 		classicMode.setLayoutParams(parms);
 		timeBattleMode.setLayoutParams(parms);
 		randomMode.setLayoutParams(parms);
@@ -114,6 +134,9 @@ public class StartUpActivity extends Activity {
 		randomMode.requestLayout();
 		settings.requestLayout();
 		achievments.requestLayout();
+		tv1.requestLayout();
+		tv2.requestLayout();
+		tv3.requestLayout();
 	}
 
 }

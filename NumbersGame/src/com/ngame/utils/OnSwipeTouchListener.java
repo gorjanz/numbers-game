@@ -3,11 +3,12 @@ package com.ngame.utils;
 import android.content.Context;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.MotionEvent;
+import fr.castorflex.android.flipimageview.library.FlipImageView;
 
-public class OnSwipeTouchListener implements OnTouchListener {
+public class OnSwipeTouchListener implements OnTouchListener, FlipImageView.OnFlipListener {
 
 	private final GestureDetector gestureDetector;
 
@@ -58,16 +59,33 @@ public class OnSwipeTouchListener implements OnTouchListener {
 		}
 	}
 
-	public void onSwipeRight() {
+	public void onSwipeRight() {}
+
+	public void onSwipeLeft() {}
+
+	public void onSwipeTop() {}
+
+	public void onSwipeBottom() {}
+
+	public void onFlipAnimationEnd(){}
+
+	public void onFlipAnimationStart(){}
+
+	public void onClick(){}
+
+	@Override
+	public void onClick(FlipImageView view) {
+		onClick();
 	}
 
-	public void onSwipeLeft() {
+	@Override
+	public void onFlipStart(FlipImageView view) {
+		onFlipAnimationStart();
 	}
 
-	public void onSwipeTop() {
-	}
-
-	public void onSwipeBottom() {
+	@Override
+	public void onFlipEnd(FlipImageView view) {
+		onFlipAnimationEnd();
 	}
 
 	@Override
