@@ -151,15 +151,18 @@ public class TimeBattleModeActivity extends Activity {
 		flipView4 = (FlipImageView) findViewById(R.id.flipView41);
 		flipView5 = (FlipImageView) findViewById(R.id.flipView51);
 
-		LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(
-				screenWidth / 5, screenHeight / 3);
+		LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(screenWidth/6,screenHeight/3);
 		parms.gravity = Gravity.CENTER_VERTICAL;
-
+		parms.rightMargin = screenWidth/20;
+		 
 		flipView1.setLayoutParams(parms);
 		flipView2.setLayoutParams(parms);
 		flipView3.setLayoutParams(parms);
 		flipView4.setLayoutParams(parms);
-		flipView5.setLayoutParams(parms);
+
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(screenWidth/6,screenHeight/3);
+		params.gravity = Gravity.CENTER_VERTICAL;
+		flipView5.setLayoutParams(params);
 
 		OnSwipeTouchListener listener1 = new OnSwipeTouchListener(ctx) {
 			public void onSwipeTop() {
@@ -260,21 +263,11 @@ public class TimeBattleModeActivity extends Activity {
 		timerView = (TextView) findViewById(R.id.timer);
 		backButton = (ImageView) findViewById(R.id.back1);
 		nextLevelButton = (ImageView) findViewById(R.id.nextLevel1);
-		Bitmap nextLevelIcon = BitmapFactory.decodeResource(getResources(),
-				R.drawable.back_button_icon);
-		Matrix matrix = new Matrix();
-		matrix.postRotate(180);
-		nextLevelIcon = Bitmap.createBitmap(nextLevelIcon, 0, 0,
-				nextLevelIcon.getWidth(), nextLevelIcon.getHeight(), matrix,
-				true);
-		nextLevelButton.setImageBitmap(nextLevelIcon);
 
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-				screenWidth / 5, screenHeight / 10);
-		params.gravity = Gravity.LEFT;
-		backButton.setLayoutParams(params);
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(screenWidth / 8, screenHeight / 10);
 		params.gravity = Gravity.RIGHT;
 		nextLevelButton.setLayoutParams(params);
+		backButton.setLayoutParams(params);
 
 		allUp.setOnClickListener(new View.OnClickListener() {
 

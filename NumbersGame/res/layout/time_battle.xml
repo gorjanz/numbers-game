@@ -20,8 +20,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="@string/startingTargetNumber"
-            android:textColor="@color/Red"
-            android:textColorHint="@color/Red"
+            android:textColor="@color/DarkRed"
+            android:textColorHint="@color/DarkRed"
             android:textSize="40sp"
             android:textStyle="bold" >
         </TextView>
@@ -126,7 +126,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:src="@drawable/back_button_icon" />
+        android:src="@drawable/next_level_icon" />
 
     <ImageView
         android:id="@+id/back1"

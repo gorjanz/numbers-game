@@ -26,6 +26,7 @@ private static final String TAG = "TimerLevelsFactory";
 		ctx = c;
 		numLevels = 0;
 		Level newLvl;
+		currentLevel=-1;
 		levels = new ArrayList<>();
 		try {
 			
@@ -34,10 +35,10 @@ private static final String TAG = "TimerLevelsFactory";
 			
 			String row = reader.readLine();
 			while(row!=null){
-				numLevels++;
 				
 				if(row.equalsIgnoreCase("extra"))
 					break;
+				numLevels++;
 				String[] nums = row.split(":");
 				LinkedList<String> steps = new LinkedList<>();
 				for (int i = 3; i < nums.length; i++) {
@@ -60,8 +61,10 @@ private static final String TAG = "TimerLevelsFactory";
 		try{
 			Random r = new Random();
 			int nextLevel = r.nextInt(numLevels);
-			while(currentLevel==nextLevel)
+			while(currentLevel==nextLevel){
 				nextLevel = r.nextInt(numLevels);
+			}
+			currentLevel = nextLevel;
 			returnLevel = levels.get(nextLevel);
 		} catch(IndexOutOfBoundsException e){
 			e.printStackTrace();

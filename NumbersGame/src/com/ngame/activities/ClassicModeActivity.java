@@ -43,6 +43,7 @@ public class ClassicModeActivity extends Activity {
 	public static final String BEST_RUN = "BEST_RUN";
 	public static final String CURRENT_FLIP_NUMBER = "CURRENT_FLIP_NUMBER";
 	public static final String CURRENT_NUMBER_OF_MOVES = "CURRENT_NUMBER_OF_MOVES";
+	public static final String NO_MORE_LEVELS = "NO_MORE_LEVELS"; 
 	
 	private Integer currentDigit1;
 	private Integer currentDigit2;
@@ -140,14 +141,18 @@ public class ClassicModeActivity extends Activity {
 		flipView4 = (FlipImageView) findViewById(R.id.flipView4);
 		flipView5 = (FlipImageView) findViewById(R.id.flipView5);
 		
-		LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(screenWidth/5,screenHeight/3);
+		LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(screenWidth/6,screenHeight/3);
 		parms.gravity = Gravity.CENTER_VERTICAL;
+		parms.rightMargin = screenWidth/20;
 		 
 		flipView1.setLayoutParams(parms);
 		flipView2.setLayoutParams(parms);
 		flipView3.setLayoutParams(parms);
 		flipView4.setLayoutParams(parms);
-		flipView5.setLayoutParams(parms);
+
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(screenWidth/6,screenHeight/3);
+		params.gravity = Gravity.CENTER_VERTICAL;
+		flipView5.setLayoutParams(params);
 
 		OnSwipeTouchListener listener1 = new OnSwipeTouchListener(ctx) {
 			public void onSwipeTop() {
@@ -249,16 +254,11 @@ public class ClassicModeActivity extends Activity {
 		targetNumber = (TextView) findViewById(R.id.targetNumberTextView);
 		backButton = (ImageView) findViewById(R.id.back);
 		nextLevelButton = (ImageView) findViewById(R.id.nextLevel);
-		Bitmap nextLevelIcon = BitmapFactory.decodeResource(getResources(), R.drawable.back_button_icon);
-		Matrix matrix = new Matrix();
-		matrix.postRotate(180);
-		nextLevelIcon = Bitmap.createBitmap(nextLevelIcon, 0, 0, nextLevelIcon.getWidth(), nextLevelIcon.getHeight(), matrix, true);
-		nextLevelButton.setImageBitmap(nextLevelIcon);
-		
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(screenWidth/5, screenHeight/10);
-		params.gravity = Gravity.LEFT;
-		backButton.setLayoutParams(params);
+
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(screenWidth/8, screenHeight/10);
 		params.gravity = Gravity.RIGHT;
+		params.bottomMargin = 5;
+		backButton.setLayoutParams(params);
 		nextLevelButton.setLayoutParams(params);
 		
 		allUp.setOnClickListener(new View.OnClickListener() {
@@ -426,12 +426,26 @@ public class ClassicModeActivity extends Activity {
 			playingLevel = levelFactory.getLevel(currentLevel);
 			
 		} catch(EndOfLevelException e){
-			currentDifficulty++;
-			levelFactory = getFactory(currentDifficulty);
-			try {
-				playingLevel = levelFactory.getLevel(currentLevel);
-			} catch (EndOfLevelException e1) {
+			if(currentDifficulty==5){
 				Toast.makeText(getApplicationContext(), LevelFactory.WINNER_SALUTE, Toast.LENGTH_LONG).show();
+				SharedPreferences.Editor prefsEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+				prefsEditor.putBoolean(NO_MORE_LEVELS, true);
+				prefsEditor.commit();
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				finish();
+			} else {
+				currentDifficulty++;
+				currentLevel = 0;
+				levelFactory = getFactory(currentDifficulty);
+				try {
+					playingLevel = levelFactory.getLevel(currentLevel);
+				} catch (EndOfLevelException e1) {
+					e1.printStackTrace();
+				}
 			}
 			
 		}
@@ -519,6 +533,9 @@ public class ClassicModeActivity extends Activity {
 				currentRun++;
 				if(currentRun>bestRun)
 					bestRun = currentRun;
+				
+				//Games.Leaderboards.submitScore(getApiClient(), LEADERBOARD_ID, 1337);
+				
 			} else {
 				currentRun = 0;
 				//Toast.makeText(getApplicationContext(), "movesUsed: " + movesUsed, Toast.LENGTH_LONG).show();

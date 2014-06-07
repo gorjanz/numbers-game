@@ -2,8 +2,10 @@ package com.ngame.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -12,18 +14,22 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ngame.R;
+import com.ngame.factories.LevelFactory;
 
 public class StartUpActivity extends Activity {
 
 	private ImageView classicMode;
 	private ImageView timeBattleMode;
-	private ImageView settings;
+	private ImageView leaderbord;
 	private ImageView achievments;
-
+	private ImageView exitGameButton;
+	
+	private boolean classicModeDisabled;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,8 +38,26 @@ public class StartUpActivity extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.start_screen);
-
+		
 		initViews();
+
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		classicModeDisabled = prefs.getBoolean(ClassicModeActivity.NO_MORE_LEVELS, false);
+		if(classicModeDisabled){
+			classicMode.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Toast.makeText(getApplicationContext(), LevelFactory.NO_MORE_LEVES_SALUTE, Toast.LENGTH_LONG).show();
+				}
+			});
+		}
 
 	}
 
@@ -41,9 +65,10 @@ public class StartUpActivity extends Activity {
 
 		classicMode = (ImageView) findViewById(R.id.classicMode);
 		timeBattleMode = (ImageView) findViewById(R.id.timeBattleMode);
-		settings = (ImageView) findViewById(R.id.settings);
+		leaderbord = (ImageView) findViewById(R.id.leaderbord);
 		achievments = (ImageView) findViewById(R.id.achievments);
-
+		exitGameButton = (ImageView) findViewById(R.id.exitGame);
+		
 		Typeface tf = Typeface.createFromAsset(getAssets(),
 	            "fonts/Origicide.ttf");
 		
@@ -70,14 +95,15 @@ public class StartUpActivity extends Activity {
 		parms.topMargin = 15;
 		tv1.setLayoutParams(params);
 		tv2.setLayoutParams(params);
-
+		
 		LinearLayout.LayoutParams smallParams = new LinearLayout.LayoutParams(width / 8, height / 10);
 		parms.leftMargin = 6;
 		parms.rightMargin = 6;
 		parms.gravity = Gravity.CENTER;
-		settings.setLayoutParams(smallParams);
+		leaderbord.setLayoutParams(smallParams);
 		achievments.setLayoutParams(smallParams);
-
+		exitGameButton.setLayoutParams(smallParams);
+		
 		classicMode.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -99,11 +125,12 @@ public class StartUpActivity extends Activity {
 			}
 		});
 
-		settings.setOnClickListener(new View.OnClickListener() {
+		leaderbord.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				//startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), LEADERBOARD_ID), REQUEST_LEADERBOARD);
 
 			}
 		});
@@ -116,11 +143,21 @@ public class StartUpActivity extends Activity {
 
 			}
 		});
+		
+		exitGameButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+
+				finish();
+			}
+		});
 
 		classicMode.requestLayout();
 		timeBattleMode.requestLayout();
-		settings.requestLayout();
+		leaderbord.requestLayout();
 		achievments.requestLayout();
+		exitGameButton.requestLayout();
 		tv1.requestLayout();
 		tv2.requestLayout();
 	}
