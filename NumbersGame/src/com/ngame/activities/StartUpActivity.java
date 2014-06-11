@@ -97,8 +97,8 @@ public class StartUpActivity extends Activity {
 		tv2.setLayoutParams(params);
 		
 		LinearLayout.LayoutParams smallParams = new LinearLayout.LayoutParams(width / 8, height / 10);
-		parms.leftMargin = 6;
-		parms.rightMargin = 6;
+		parms.leftMargin = 15;
+		parms.rightMargin = 15;
 		parms.gravity = Gravity.CENTER;
 		leaderbord.setLayoutParams(smallParams);
 		achievments.setLayoutParams(smallParams);

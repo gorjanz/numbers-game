@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_id">143166910325</string>
+
+    <!-- Achievement ids for google play game services -->
+    <string name="reached_level_two">CgkI9d6mq5UEEAIQAQ</string>
+    <string name="reached_level_three">CgkI9d6mq5UEEAIQAg</string>
+    <string name="reached_level_four">CgkI9d6mq5UEEAIQAw</string>
+    <string name="reached_level_five">CgkI9d6mq5UEEAIQBA</string>
+    <string name="played_hundred_games">CgkI9d6mq5UEEAIQBQ</string>
+
+    <!-- Leaderboard id for google play game services -->
+    <string name="best_winning_run">CgkI9d6mq5UEEAIQBg</string>
+</resources>
