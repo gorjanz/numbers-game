@@ -1,6 +1,5 @@
 package com.ngame.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -17,10 +16,12 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.example.games.basegameutils.BaseGameActivity;
+import com.google.example.games.basegameutils.GameHelper;
 import com.ngame.R;
 import com.ngame.factories.LevelFactory;
 
-public class StartUpActivity extends Activity {
+public class StartUpActivity extends BaseGameActivity implements View.OnClickListener {
 
 	private ImageView classicMode;
 	private ImageView timeBattleMode;
@@ -32,7 +33,6 @@ public class StartUpActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -41,6 +41,10 @@ public class StartUpActivity extends Activity {
 		
 		initViews();
 
+		super.onCreate(savedInstanceState);
+		
+		findViewById(R.id.sign_in_bar).setVisibility(View.GONE);
+		findViewById(R.id.sign_out_bar).setVisibility(View.GONE);
 	}
 	
 	@Override
@@ -63,12 +67,18 @@ public class StartUpActivity extends Activity {
 
 	private void initViews() {
 
+		// setup google-sign-in buttons
+		findViewById(R.id.sign_in_button).setOnClickListener(this);
+        findViewById(R.id.sign_out_button).setOnClickListener(this);
+		
+        // get view references
 		classicMode = (ImageView) findViewById(R.id.classicMode);
 		timeBattleMode = (ImageView) findViewById(R.id.timeBattleMode);
 		leaderbord = (ImageView) findViewById(R.id.leaderbord);
 		achievments = (ImageView) findViewById(R.id.achievments);
 		exitGameButton = (ImageView) findViewById(R.id.exitGame);
 		
+		// setup text-views font
 		Typeface tf = Typeface.createFromAsset(getAssets(),
 	            "fonts/Origicide.ttf");
 		
@@ -77,10 +87,12 @@ public class StartUpActivity extends Activity {
 		TextView tv2 = (TextView) findViewById(R.id.timeBattleModeTV);
 		tv2.setTypeface(tf);
 		
+		// get screen size measures
 		Display display = getWindowManager().getDefaultDisplay();
 		int width = display.getWidth();
 		int height = display.getHeight();
 
+		// setup look of components based on screen size
 		LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(width / 3, height / 5);
 		parms.gravity = Gravity.CENTER;
 		parms.bottomMargin = 5;
@@ -104,6 +116,7 @@ public class StartUpActivity extends Activity {
 		achievments.setLayoutParams(smallParams);
 		exitGameButton.setLayoutParams(smallParams);
 		
+		// setup on-click-listeners for every view
 		classicMode.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -153,6 +166,7 @@ public class StartUpActivity extends Activity {
 			}
 		});
 
+		// apply changes before next drawing of the layout
 		classicMode.requestLayout();
 		timeBattleMode.requestLayout();
 		leaderbord.requestLayout();
@@ -162,4 +176,45 @@ public class StartUpActivity extends Activity {
 		tv2.requestLayout();
 	}
 
+	// Shows the "sign in" bar (explanation and button).
+	private void showSignInBar() {
+		findViewById(R.id.sign_in_bar).setVisibility(View.VISIBLE);
+		findViewById(R.id.sign_out_bar).setVisibility(View.GONE);
+	}
+	
+	// Shows the "sign out" bar (explanation and button).
+	private void showSignOutBar() {
+		findViewById(R.id.sign_in_bar).setVisibility(View.GONE);
+		findViewById(R.id.sign_out_bar).setVisibility(View.VISIBLE);
+	}
+
+	@Override
+	public void onSignInFailed() {
+        // Sign-in has failed. So show the user the sign-in button
+        // so they can click the "Sign-in" button.
+        showSignInBar();
+	}
+
+	@Override
+	public void onSignInSucceeded() {
+        // Sign-in worked!
+        showSignOutBar();
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+        case R.id.sign_in_button:
+            // start the sign-in flow
+            beginUserInitiatedSignIn();
+            break;
+        case R.id.sign_out_button:
+            // sign out.
+            signOut();
+            showSignInBar();
+            break;
+		}
+		
+	}
+	
 }

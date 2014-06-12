@@ -72,5 +72,52 @@
             android:background="@android:color/transparent"
             android:src="@drawable/exit_app_icon" />
     </LinearLayout>
+    
+    <LinearLayout android:id="@+id/sign_in_bar"
+        android:layout_height="100dp"
+        android:layout_width="match_parent"
+        android:background="@color/BlanchedAlmond"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="10dp">
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_in_why"
+            android:layout_marginLeft="10dp"
+            android:textColor="#808080" />
+    </LinearLayout>
+    
+    <LinearLayout android:id="@+id/sign_out_bar"
+        android:layout_height="100dp"
+        android:layout_width="match_parent"
+        android:background="@color/BlanchedAlmond"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        android:gravity="center|right"
+        android:padding="10dp">
+
+        <TextView android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/you_are_signed_in"
+            android:layout_marginRight="10dp"
+            android:textColor="#808080" />
+
+         <Button
+            android:id="@+id/sign_out_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/GoogleRed"
+            android:text="@string/sign_out"
+            android:textSize="12sp" />
+    </LinearLayout>
 
 </LinearLayout>
