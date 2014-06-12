@@ -16,13 +16,15 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.games.Games;
 import com.google.example.games.basegameutils.BaseGameActivity;
-import com.google.example.games.basegameutils.GameHelper;
 import com.ngame.R;
 import com.ngame.factories.LevelFactory;
 
 public class StartUpActivity extends BaseGameActivity implements View.OnClickListener {
 
+	private static final int REQUEST_LEADERBOARD = 666;
+	protected static final int REQUEST_ACHIEVEMENTS = 333;
 	private ImageView classicMode;
 	private ImageView timeBattleMode;
 	private ImageView leaderbord;
@@ -142,9 +144,7 @@ public class StartUpActivity extends BaseGameActivity implements View.OnClickLis
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				//startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), LEADERBOARD_ID), REQUEST_LEADERBOARD);
-
+				startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), getResources().getString(R.string.best_winning_run)), REQUEST_LEADERBOARD);
 			}
 		});
 
@@ -152,8 +152,7 @@ public class StartUpActivity extends BaseGameActivity implements View.OnClickLis
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-
+				startActivityForResult(Games.Achievements.getAchievementsIntent(getApiClient()), REQUEST_ACHIEVEMENTS);
 			}
 		});
 		

@@ -12,7 +12,16 @@
     
     <string name="signing_in">Signing in with Google</string>
     <string name="signing_out">Signing out</string>
+    <string name="sign_in_why">Sign in with Google to share your scores and achievements with your friends.</string>
+    <string name="you_are_signed_in">You are signed in with Google.</string>
+    <string name="sign_out">Sign out</string>
+    <string name="your_progress_will_be_uploaded">Your existing achievements and score will be uploaded shortly.</string>
+    <string name="must_sign_in">Please return to the main screen and sign-in with Google.</string>
+    <string name="sign_in_explanation">Sign with Google to upload your achievements and share with friends.</string>
     <string name="signed_out_greeting">Hello, anonymous user (not signed in)!</string>
+    <string name="see_your_progress">See your progress:</string>
+    <string name="show_achievements">Show Achievements</string>
+    <string name="show_leaderboards">Show Leaderboards</string>
     
     <string name="achievements_not_available">Please sign in to view achievements.</string>
     <string name="leaderboards_not_available">Please sign in to view leaderboards.</string>
@@ -22,9 +31,17 @@
     <string name="achievement_reached_level_5">Congratulations! You have reached level 5 difficulty!</string>
     <string name="achievement">Achievement</string>
     
-    <string name="sign_in_why">Sign in with Google to share your scores and achievements with your friends.</string>
-    <string name="you_are_signed_in">You are signed in with Google.</string>
-    <string name="sign_out">Sign out</string>
-    <string name="your_progress_will_be_uploaded">Your existing achievements and score will be uploaded shortly.</string>
+    
+    <string name="app_id">143166910325</string>
+
+    <!-- Achievement ids for google play game services -->
+    <string name="achievement_reached_level_two">CgkI9d6mq5UEEAIQAQ</string>
+    <string name="achievement_reached_level_three">CgkI9d6mq5UEEAIQAg</string>
+    <string name="achievement_reached_level_four">CgkI9d6mq5UEEAIQAw</string>
+    <string name="achievement_reached_level_five">CgkI9d6mq5UEEAIQBA</string>
+    <string name="achievement_played_hundred_games">CgkI9d6mq5UEEAIQBQ</string>
+
+    <!-- Leaderboard id for google play game services -->
+    <string name="best_winning_run">CgkI9d6mq5UEEAIQBg</string>
 
 </resources>

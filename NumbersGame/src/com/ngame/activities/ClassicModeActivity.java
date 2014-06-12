@@ -1,11 +1,7 @@
 package com.ngame.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -21,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.games.Games;
+import com.google.example.games.basegameutils.BaseGameActivity;
 import com.ngame.R;
 import com.ngame.factories.Level1Factory;
 import com.ngame.factories.Level2Factory;
@@ -34,7 +32,7 @@ import com.ngame.utils.OnSwipeTouchListener;
 
 import fr.castorflex.android.flipimageview.library.FlipImageView;
 
-public class ClassicModeActivity extends Activity {
+public class ClassicModeActivity extends BaseGameActivity {
 
 	public static final String TAG = "MainActvity";
 	public static final String CURRENT_LEVEL = "CURRENT_LEVEL";
@@ -43,7 +41,7 @@ public class ClassicModeActivity extends Activity {
 	public static final String BEST_RUN = "BEST_RUN";
 	public static final String CURRENT_FLIP_NUMBER = "CURRENT_FLIP_NUMBER";
 	public static final String CURRENT_NUMBER_OF_MOVES = "CURRENT_NUMBER_OF_MOVES";
-	public static final String NO_MORE_LEVELS = "NO_MORE_LEVELS"; 
+	public static final String NO_MORE_LEVELS = "NO_MORE_LEVELS";
 	
 	private Integer currentDigit1;
 	private Integer currentDigit2;
@@ -68,6 +66,7 @@ public class ClassicModeActivity extends Activity {
 	private int currentRun;
 	private int bestRun;
 	private int movesUsed;
+	private int gamesPlayed;
 	
 	private int screenWidth;
 	private int screenHeight;
@@ -81,13 +80,14 @@ public class ClassicModeActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_main);
 		
+		super.onCreate(savedInstanceState);
+
 		Display display = getWindowManager().getDefaultDisplay();
 		screenWidth = display.getWidth();
 		screenHeight = display.getHeight();
@@ -98,6 +98,7 @@ public class ClassicModeActivity extends Activity {
 		initializeDrawables();
 		levelFactory = getFactory(currentDifficulty);
 		playingLevel = null;
+		getViewsRefferences();
 		nextLevel();
 		initializeViews();
 		
@@ -106,29 +107,27 @@ public class ClassicModeActivity extends Activity {
 		
 		//setFlipViewsDrawables(playingLevel.getGameNum());
 	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		
-		saveGameState();
-		saveUIState();
-		
-	}
-	
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		
-		loadGameState();
-		loadUIState();
-	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
+	
 		saveGameState();
 		saveUIState();
+		
+		if(gamesPlayed>0){
+			Games.Achievements.increment(getApiClient(), getResources().getString(R.string.played_hundred_games), gamesPlayed);
+		}
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		loadGameState();
+		loadUIState();
+		
+		gamesPlayed = 0;
 	}
 	
 	private void initializeFlipViews() {
@@ -245,7 +244,7 @@ public class ClassicModeActivity extends Activity {
 
 	}
 	
-	private void initializeViews(){
+	private void getViewsRefferences(){
 		
 		allUp = (Button) findViewById(R.id.buttonUp);
 		allDown = (Button) findViewById(R.id.buttonDown);
@@ -254,6 +253,10 @@ public class ClassicModeActivity extends Activity {
 		targetNumber = (TextView) findViewById(R.id.targetNumberTextView);
 		backButton = (ImageView) findViewById(R.id.back);
 		nextLevelButton = (ImageView) findViewById(R.id.nextLevel);
+	}
+	
+	private void initializeViews(){
+		
 
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(screenWidth/8, screenHeight/10);
 		params.gravity = Gravity.RIGHT;
@@ -296,15 +299,7 @@ public class ClassicModeActivity extends Activity {
 			}
 		});
 		
-		nextLevelButton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				nextLevel();
-				updateViews();
-				//saveGameState();
-			}
-		});
+		disableNextLevel();
 		
 		Typeface tf = Typeface.createFromAsset(getAssets(),
 	            "fonts/Origicide.ttf");
@@ -420,6 +415,9 @@ public class ClassicModeActivity extends Activity {
 
 	}
 	
+	/**
+	 * Generate the next level for the game
+	 */
 	private void nextLevel(){
 		currentLevel++;
 		try{
@@ -458,8 +456,13 @@ public class ClassicModeActivity extends Activity {
 		}
 		setFlipViewsDrawables(playingLevel.getGameNum());
 		movesUsed = 0;
+		disableNextLevel();
 	}
 	
+	/**
+	 * Serialize the flip-views into a number
+	 * @return the string representation of the flip-views
+	 */
 	private String flipToString(){
 		StringBuilder sb = new StringBuilder();
 		sb.append(Integer.toString(currentDigit1));
@@ -470,6 +473,10 @@ public class ClassicModeActivity extends Activity {
 		return sb.toString();
 	}
 	
+	/**
+	 * Initialize the number images for the flip-views
+	 * @param num which number the images should show
+	 */
 	private void setFlipViewsDrawables(String num){
 		currentDigit1 = Integer.parseInt(num.charAt(0) + "");
 		currentDigit2 = Integer.parseInt(num.charAt(1) + "");
@@ -496,6 +503,11 @@ public class ClassicModeActivity extends Activity {
 		targetNumber.setText("Target: " + playingLevel.getTargetNum());
 	}
 
+	/**
+	 * Return the factory with the next harder difficulty
+	 * @param i the next difficulty
+	 * @return the factory with that difficulty
+	 */
 	private LevelFactory getFactory(int i){
 		LevelFactory factory = null;
 		switch (i) {
@@ -505,23 +517,30 @@ public class ClassicModeActivity extends Activity {
 
 		case 2:
 			factory = new Level2Factory(getApplicationContext());
+			Games.Achievements.unlock(getApiClient(), getResources().getString(R.string.reached_level_two));
 			break;
 			
 		case 3:
 			factory = new Level3Factory(getApplicationContext());
+			Games.Achievements.unlock(getApiClient(), getResources().getString(R.string.reached_level_three));
 			break;
 			
 		case 4:
 			factory = new Level4Factory(getApplicationContext());
+			Games.Achievements.unlock(getApiClient(), getResources().getString(R.string.reached_level_four));
 			break;
 			
 		default:
 			factory = new Level5Factory(getApplicationContext());
+			Games.Achievements.unlock(getApiClient(), getResources().getString(R.string.reached_level_five));
 			break;
 		}
 		return factory;
 	}
 	
+	/**
+	 * After each move, check if the flip-number is equal to the target number which will end the current game
+	 */
 	private void checkGameOver(){
 		
 		movesUsed++;
@@ -531,10 +550,10 @@ public class ClassicModeActivity extends Activity {
 			if(movesUsed==playingLevel.getMinMoves()){
 				Toast.makeText(getApplicationContext(), LevelFactory.SOLVED_LEVEL_SALUTE, Toast.LENGTH_LONG).show();
 				currentRun++;
-				if(currentRun>bestRun)
+				if(currentRun>bestRun){
 					bestRun = currentRun;
-				
-				//Games.Leaderboards.submitScore(getApiClient(), LEADERBOARD_ID, 1337);
+					Games.Leaderboards.submitScore(getApiClient(), getResources().getString(R.string.best_winning_run), bestRun);
+				}
 				
 			} else {
 				currentRun = 0;
@@ -543,10 +562,17 @@ public class ClassicModeActivity extends Activity {
 				Toast.makeText(getApplicationContext(), "Level solved with " + (movesUsed-playingLevel.getMinMoves()) + " extra transformations!", Toast.LENGTH_LONG).show();
 				//Toast.makeText(getApplicationContext(), playingLevel.getSolution(), Toast.LENGTH_LONG).show();
 			}
+			
+			gamesPlayed++;
+			enableNextLevel();
+			
+			//Games.Achievements.increment(getApiClient(), getResources().getString(R.string.played_hundred_games), 1);
 		}
 	}
 	
-	
+	/**
+	 * Save the current game-state in shared-preferences
+	 */
 	private void saveGameState(){
 	
 		SharedPreferences.Editor prefsEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
@@ -559,6 +585,9 @@ public class ClassicModeActivity extends Activity {
 		
 	}
 	
+	/**
+	 * Save the state of the user-interface in shared-preferences
+	 */
 	private void saveUIState(){
 	
 		SharedPreferences.Editor prefsEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
@@ -567,6 +596,9 @@ public class ClassicModeActivity extends Activity {
 		
 	}
 	
+	/**
+	 * Load the current game-state from shared-preferences
+	 */
 	private void loadGameState(){
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -578,6 +610,9 @@ public class ClassicModeActivity extends Activity {
 		
 	}
 	
+	/**
+	 * Load the current state of the user-interface from shared-preferences
+	 */
 	private void loadUIState(){
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -598,6 +633,43 @@ public class ClassicModeActivity extends Activity {
 		targetNumber.setText("Target: " + playingLevel.getTargetNum());
 		currentRunTV.setText("Current: " + Integer.toString(currentRun));
 		bestRunTV.setText("Best: " + Integer.toString(bestRun));
+		
+	}
+
+	private void enableNextLevel(){
+		
+		nextLevelButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				nextLevel();
+				updateViews();
+			}
+		});
+		
+	}
+	
+	private void disableNextLevel(){
+		
+		nextLevelButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(getApplicationContext(), "You need to solve this level in order to advance to the next one...", Toast.LENGTH_SHORT).show();
+			}
+		});
+		
+	}
+	
+	
+	@Override
+	public void onSignInFailed() {
+		Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onSignInSucceeded() {
+		// TODO something that needs for the user to be signed-in
 		
 	}
 }
