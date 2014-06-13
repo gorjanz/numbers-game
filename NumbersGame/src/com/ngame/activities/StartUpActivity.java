@@ -144,7 +144,13 @@ public class StartUpActivity extends BaseGameActivity implements View.OnClickLis
 
 			@Override
 			public void onClick(View v) {
-				startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), getResources().getString(R.string.best_winning_run)), REQUEST_LEADERBOARD);
+				if (isSignedIn()) {
+				    startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), getResources().getString(R.string.best_winning_run)), REQUEST_LEADERBOARD);
+				}
+				else {
+					Toast.makeText(getApplicationContext(), getResources().getString(R.string.leaderboards_not_available), Toast.LENGTH_SHORT).show();
+				}
+				
 			}
 		});
 
@@ -152,7 +158,13 @@ public class StartUpActivity extends BaseGameActivity implements View.OnClickLis
 
 			@Override
 			public void onClick(View v) {
-				startActivityForResult(Games.Achievements.getAchievementsIntent(getApiClient()), REQUEST_ACHIEVEMENTS);
+				if (isSignedIn()) {
+				    startActivityForResult(Games.Achievements.getAchievementsIntent(getApiClient()), REQUEST_ACHIEVEMENTS);
+				}
+				else {
+					Toast.makeText(getApplicationContext(), getResources().getString(R.string.achievements_not_available), Toast.LENGTH_SHORT).show();
+				}
+				
 			}
 		});
 		

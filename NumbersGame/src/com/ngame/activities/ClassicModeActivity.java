@@ -1,11 +1,14 @@
 package com.ngame.activities;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -18,7 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.games.Games;
-import com.google.example.games.basegameutils.BaseGameActivity;
+import com.google.example.games.basegameutils.GameHelper;
+import com.google.example.games.basegameutils.GameHelper.GameHelperListener;
 import com.ngame.R;
 import com.ngame.factories.Level1Factory;
 import com.ngame.factories.Level2Factory;
@@ -32,7 +36,7 @@ import com.ngame.utils.OnSwipeTouchListener;
 
 import fr.castorflex.android.flipimageview.library.FlipImageView;
 
-public class ClassicModeActivity extends BaseGameActivity {
+public class ClassicModeActivity extends Activity {
 
 	public static final String TAG = "MainActvity";
 	public static final String CURRENT_LEVEL = "CURRENT_LEVEL";
@@ -42,6 +46,7 @@ public class ClassicModeActivity extends BaseGameActivity {
 	public static final String CURRENT_FLIP_NUMBER = "CURRENT_FLIP_NUMBER";
 	public static final String CURRENT_NUMBER_OF_MOVES = "CURRENT_NUMBER_OF_MOVES";
 	public static final String NO_MORE_LEVELS = "NO_MORE_LEVELS";
+	public static final String READY_FOR_NEXT_LEVEL = "READY_FOR_NEXT_LEVEL";
 	
 	private Integer currentDigit1;
 	private Integer currentDigit2;
@@ -67,6 +72,7 @@ public class ClassicModeActivity extends BaseGameActivity {
 	private int bestRun;
 	private int movesUsed;
 	private int gamesPlayed;
+	private boolean readyForNextLevel;
 	
 	private int screenWidth;
 	private int screenHeight;
@@ -76,18 +82,33 @@ public class ClassicModeActivity extends BaseGameActivity {
 	private LevelFactory levelFactory;
 	private Level playingLevel;
 	
+	private GameHelper mHelper;
 	private Drawable[] drawables;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_main);
 		
-		super.onCreate(savedInstanceState);
-
+		mHelper = new GameHelper(this, GameHelper.CLIENT_ALL);
+		mHelper.enableDebugLog(true, "GameHelper");
+		mHelper.setMaxAutoSignInAttempts(0);
+		
+		mHelper.setup(new GameHelperListener() {
+			@Override
+			public void onSignInSucceeded() {
+			}
+			@Override
+			public void onSignInFailed() {
+			}
+		});
+		
+		gamesPlayed = 0;
+		
 		Display display = getWindowManager().getDefaultDisplay();
 		screenWidth = display.getWidth();
 		screenHeight = display.getHeight();
@@ -102,10 +123,33 @@ public class ClassicModeActivity extends BaseGameActivity {
 		nextLevel();
 		initializeViews();
 		
-		
+		saveGameState();
 		loadUIState();
 		
-		//setFlipViewsDrawables(playingLevel.getGameNum());
+		Log.e(TAG, "onCreate");
+		Log.e(TAG, playingLevel.getGameNum());
+		
+		setFlipViewsDrawables(playingLevel.getGameNum());
+		saveUIState();
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		mHelper.onStart(this);
+		
+		Log.e(TAG, "onStart");
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		mHelper.onStop();
+		Log.e(TAG, "onStop");
+		
+		saveGameState();
+		saveUIState();
+
 	}
 	
 	@Override
@@ -116,18 +160,32 @@ public class ClassicModeActivity extends BaseGameActivity {
 		saveUIState();
 		
 		if(gamesPlayed>0){
-			Games.Achievements.increment(getApiClient(), getResources().getString(R.string.played_hundred_games), gamesPlayed);
+			if (mHelper.isSignedIn()) {
+			    Games.Achievements.increment(mHelper.getApiClient(), getResources().getString(R.string.played_hundred_games), gamesPlayed);
+			}
+			else {
+				Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
+			}
 		}
+		
+		Log.e(TAG, "onPause");
 	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
-		loadGameState();
-		loadUIState();
+		Log.e(TAG, "onResume");
+//		
+//		loadGameState();
+//		loadUIState();
 		
 		gamesPlayed = 0;
+	}
+
+	@Override
+	protected void onActivityResult(int request, int response, Intent data) {
+	    super.onActivityResult(request, response, data);
+	    mHelper.onActivityResult(request, response, data);
 	}
 	
 	private void initializeFlipViews() {
@@ -419,7 +477,9 @@ public class ClassicModeActivity extends BaseGameActivity {
 	 * Generate the next level for the game
 	 */
 	private void nextLevel(){
-		currentLevel++;
+		if(readyForNextLevel){
+			currentLevel++;
+		}
 		try{
 			playingLevel = levelFactory.getLevel(currentLevel);
 			
@@ -457,6 +517,7 @@ public class ClassicModeActivity extends BaseGameActivity {
 		setFlipViewsDrawables(playingLevel.getGameNum());
 		movesUsed = 0;
 		disableNextLevel();
+		readyForNextLevel = false;
 	}
 	
 	/**
@@ -501,6 +562,7 @@ public class ClassicModeActivity extends BaseGameActivity {
 		currentRunTV.setText("Current: " + Integer.toString(currentRun));
 		bestRunTV.setText("Best: " + Integer.toString(bestRun));
 		targetNumber.setText("Target: " + playingLevel.getTargetNum());
+		//setFlipViewsDrawables(playingLevel.getGameNum());
 	}
 
 	/**
@@ -517,22 +579,46 @@ public class ClassicModeActivity extends BaseGameActivity {
 
 		case 2:
 			factory = new Level2Factory(getApplicationContext());
-			Games.Achievements.unlock(getApiClient(), getResources().getString(R.string.reached_level_two));
+			if (mHelper.isSignedIn()) {
+				Games.Achievements.unlock(mHelper.getApiClient(), getResources().getString(R.string.reached_level_two));
+			}
+			else {
+				Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
+			}
+			
 			break;
 			
 		case 3:
 			factory = new Level3Factory(getApplicationContext());
-			Games.Achievements.unlock(getApiClient(), getResources().getString(R.string.reached_level_three));
+			
+			if (mHelper.isSignedIn()) {
+				Games.Achievements.unlock(mHelper.getApiClient(), getResources().getString(R.string.reached_level_three));
+			}
+			else {
+				Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
+			}
 			break;
 			
 		case 4:
 			factory = new Level4Factory(getApplicationContext());
-			Games.Achievements.unlock(getApiClient(), getResources().getString(R.string.reached_level_four));
+			if (mHelper.isSignedIn()) {
+				Games.Achievements.unlock(mHelper.getApiClient(), getResources().getString(R.string.reached_level_four));
+			}
+			else {
+				Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
+			}
+			
 			break;
 			
 		default:
 			factory = new Level5Factory(getApplicationContext());
-			Games.Achievements.unlock(getApiClient(), getResources().getString(R.string.reached_level_five));
+			if (mHelper.isSignedIn()) {
+				Games.Achievements.unlock(mHelper.getApiClient(), getResources().getString(R.string.reached_level_five));
+			}
+			else {
+				Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
+			}
+			
 			break;
 		}
 		return factory;
@@ -543,6 +629,14 @@ public class ClassicModeActivity extends BaseGameActivity {
 	 */
 	private void checkGameOver(){
 		
+		
+		if (mHelper.isSignedIn()) {
+			Games.Achievements.unlock(mHelper.getApiClient(), "CgkI9d6mq5UEEAIQBw");
+		}
+		else {
+			Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
+		}
+		
 		movesUsed++;
 		
 		String flipViewsNumber = flipToString();
@@ -552,7 +646,14 @@ public class ClassicModeActivity extends BaseGameActivity {
 				currentRun++;
 				if(currentRun>bestRun){
 					bestRun = currentRun;
-					Games.Leaderboards.submitScore(getApiClient(), getResources().getString(R.string.best_winning_run), bestRun);
+					if (mHelper.isSignedIn()) {
+						Games.Leaderboards.submitScore(mHelper.getApiClient(), getResources().getString(R.string.best_winning_run), bestRun);
+					}
+					else {
+						Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
+						
+					}
+					
 				}
 				
 			} else {
@@ -565,6 +666,7 @@ public class ClassicModeActivity extends BaseGameActivity {
 			
 			gamesPlayed++;
 			enableNextLevel();
+			readyForNextLevel = true;
 			
 			//Games.Achievements.increment(getApiClient(), getResources().getString(R.string.played_hundred_games), 1);
 		}
@@ -581,6 +683,7 @@ public class ClassicModeActivity extends BaseGameActivity {
 		prefsEditor.putInt(CURRENT_RUN, currentRun);
 		prefsEditor.putInt(BEST_RUN, bestRun);
 		prefsEditor.putInt(CURRENT_NUMBER_OF_MOVES, movesUsed);
+		prefsEditor.putBoolean(READY_FOR_NEXT_LEVEL, readyForNextLevel);
 		prefsEditor.commit();
 		
 	}
@@ -607,6 +710,7 @@ public class ClassicModeActivity extends BaseGameActivity {
 		currentRun = prefs.getInt(CURRENT_RUN, 0);
 		bestRun = prefs.getInt(BEST_RUN, 0);
 		movesUsed = prefs.getInt(CURRENT_NUMBER_OF_MOVES, 0);
+		readyForNextLevel = prefs.getBoolean(READY_FOR_NEXT_LEVEL, true);
 		
 	}
 	
@@ -661,15 +765,4 @@ public class ClassicModeActivity extends BaseGameActivity {
 		
 	}
 	
-	
-	@Override
-	public void onSignInFailed() {
-		Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
-	}
-
-	@Override
-	public void onSignInSucceeded() {
-		// TODO something that needs for the user to be signed-in
-		
-	}
 }
