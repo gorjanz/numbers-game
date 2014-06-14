@@ -8,11 +8,13 @@ import android.preference.PreferenceManager;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +31,8 @@ public class StartUpActivity extends BaseGameActivity implements View.OnClickLis
 	private ImageView timeBattleMode;
 	private ImageView leaderbord;
 	private ImageView achievments;
-	private ImageView exitGameButton;
+	private ImageView exitGame;
+	private ImageView about;
 	
 	private boolean classicModeDisabled;
 	
@@ -78,7 +81,8 @@ public class StartUpActivity extends BaseGameActivity implements View.OnClickLis
 		timeBattleMode = (ImageView) findViewById(R.id.timeBattleMode);
 		leaderbord = (ImageView) findViewById(R.id.leaderbord);
 		achievments = (ImageView) findViewById(R.id.achievments);
-		exitGameButton = (ImageView) findViewById(R.id.exitGame);
+		exitGame = (ImageView) findViewById(R.id.exitGame);
+		about = (ImageView) findViewById(R.id.about);
 		
 		// setup text-views font
 		Typeface tf = Typeface.createFromAsset(getAssets(),
@@ -111,12 +115,15 @@ public class StartUpActivity extends BaseGameActivity implements View.OnClickLis
 		tv2.setLayoutParams(params);
 		
 		LinearLayout.LayoutParams smallParams = new LinearLayout.LayoutParams(width / 8, height / 10);
-		parms.leftMargin = 15;
-		parms.rightMargin = 15;
-		parms.gravity = Gravity.CENTER;
+		
+		parms.leftMargin = width/16;
+		parms.rightMargin = width/16;
+		//parms.gravity = Gravity.CENTER;
+		about.setLayoutParams(smallParams);
 		leaderbord.setLayoutParams(smallParams);
 		achievments.setLayoutParams(smallParams);
-		exitGameButton.setLayoutParams(smallParams);
+		exitGame.setLayoutParams(smallParams);
+
 		
 		// setup on-click-listeners for every view
 		classicMode.setOnClickListener(new View.OnClickListener() {
@@ -140,6 +147,17 @@ public class StartUpActivity extends BaseGameActivity implements View.OnClickLis
 			}
 		});
 
+		about.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent launchAboutSection = new Intent(
+						getApplicationContext(), AboutActivity.class);
+				startActivity(launchAboutSection);
+
+			}
+		});
+		
 		leaderbord.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -168,7 +186,7 @@ public class StartUpActivity extends BaseGameActivity implements View.OnClickLis
 			}
 		});
 		
-		exitGameButton.setOnClickListener(new View.OnClickListener() {
+		exitGame.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -180,9 +198,10 @@ public class StartUpActivity extends BaseGameActivity implements View.OnClickLis
 		// apply changes before next drawing of the layout
 		classicMode.requestLayout();
 		timeBattleMode.requestLayout();
+		about.requestLayout();
 		leaderbord.requestLayout();
 		achievments.requestLayout();
-		exitGameButton.requestLayout();
+		exitGame.requestLayout();
 		tv1.requestLayout();
 		tv2.requestLayout();
 	}
