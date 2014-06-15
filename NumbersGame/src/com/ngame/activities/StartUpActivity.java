@@ -116,8 +116,8 @@ public class StartUpActivity extends BaseGameActivity implements View.OnClickLis
 		
 		LinearLayout.LayoutParams smallParams = new LinearLayout.LayoutParams(width / 8, height / 10);
 		
-		parms.leftMargin = width/16;
-		parms.rightMargin = width/16;
+		smallParams.leftMargin = width/16;
+		smallParams.rightMargin = width/16;
 		//parms.gravity = Gravity.CENTER;
 		about.setLayoutParams(smallParams);
 		leaderbord.setLayoutParams(smallParams);

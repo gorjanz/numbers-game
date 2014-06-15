@@ -319,6 +319,7 @@ public class ClassicModeActivity extends Activity {
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(screenWidth/8, screenHeight/10);
 		params.gravity = Gravity.RIGHT;
 		params.bottomMargin = 5;
+		params.rightMargin = 5;
 		backButton.setLayoutParams(params);
 		nextLevelButton.setLayoutParams(params);
 		
@@ -629,13 +630,13 @@ public class ClassicModeActivity extends Activity {
 	 */
 	private void checkGameOver(){
 		
-		
-		if (mHelper.isSignedIn()) {
-			Games.Achievements.unlock(mHelper.getApiClient(), "CgkI9d6mq5UEEAIQBw");
-		}
-		else {
-			Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
-		}
+//		
+//		if (mHelper.isSignedIn()) {
+//			Games.Achievements.unlock(mHelper.getApiClient(), "CgkI9d6mq5UEEAIQCA");
+//		}
+//		else {
+//			Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
+//		}
 		
 		movesUsed++;
 		
