@@ -13,7 +13,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -56,8 +55,8 @@ public class TimeBattleModeActivity extends Activity {
 	private int screenWidth;
 	private int screenHeight;
 
-	private Button allUp;
-	private Button allDown;
+	private ImageView allUp;
+	private ImageView allDown;
 	private TimerLevelsFactory levelFactory;
 	private Level playingLevel;
 
@@ -254,8 +253,8 @@ public class TimeBattleModeActivity extends Activity {
 
 	private void initializeViews() {
 
-		allUp = (Button) findViewById(R.id.buttonUp1);
-		allDown = (Button) findViewById(R.id.buttonDown1);
+		allUp = (ImageView) findViewById(R.id.buttonUp1);
+		allDown = (ImageView) findViewById(R.id.buttonDown1);
 		targetNumber = (TextView) findViewById(R.id.targetNumberTextView1);
 		timerView = (TextView) findViewById(R.id.timer);
 		backButton = (ImageView) findViewById(R.id.back1);
@@ -267,6 +266,17 @@ public class TimeBattleModeActivity extends Activity {
 		params.rightMargin = 5;
 		nextLevelButton.setLayoutParams(params);
 		backButton.setLayoutParams(params);
+		
+		params = new LinearLayout.LayoutParams(screenWidth/8, screenHeight/10);
+		params.gravity = Gravity.CENTER_HORIZONTAL;
+		params.bottomMargin = 5;
+		allUp.setLayoutParams(params);
+
+		params = new LinearLayout.LayoutParams(screenWidth/8, screenHeight/10);
+		params.gravity = Gravity.CENTER_HORIZONTAL;
+		params.topMargin = 5;
+		allDown.setLayoutParams(params);
+
 
 		allUp.setOnClickListener(new View.OnClickListener() {
 

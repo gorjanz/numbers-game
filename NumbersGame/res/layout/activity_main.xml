@@ -28,13 +28,13 @@
         </TextView>
     </LinearLayout>
 
-    <Button
+    <ImageView
         android:id="@+id/buttonUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="5dp"
-        android:background="@drawable/arrow_up" />
+        android:src="@drawable/arrow_up" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -102,19 +102,20 @@
             app:reverseRotation="true" />
     </LinearLayout>
 
-    <Button
+    <ImageView
         android:id="@+id/buttonDown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="5dp"
-        android:background="@drawable/arrow_down" />
+        android:src="@drawable/arrow_down" />
 
     <TextView
         android:id="@+id/currentRun"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
         android:hint="@string/startingPoints"
         android:textColor="@color/Black"
         android:textColorHint="@color/Red"
@@ -126,6 +127,7 @@
         android:id="@+id/bestRun"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
         android:hint="@string/startingPoints"
         android:textColor="@color/Black"
         android:textColorHint="@color/Red"
@@ -133,18 +135,25 @@
         android:textStyle="bold" >
     </TextView>
 
-    <ImageView
-        android:id="@+id/nextLevel"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:src="@drawable/next_level_icon" />
+        android:gravity="right"
+        android:orientation="horizontal" >
 
-    <ImageView
-        android:id="@+id/back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:src="@drawable/back_button_icon" />
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/back_button_icon" />
+
+        <ImageView
+            android:id="@+id/nextLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/next_level_icon" />
+    </LinearLayout>
 
 </LinearLayout>

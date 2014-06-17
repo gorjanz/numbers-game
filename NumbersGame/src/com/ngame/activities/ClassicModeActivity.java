@@ -14,7 +14,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -77,8 +76,8 @@ public class ClassicModeActivity extends Activity {
 	private int screenWidth;
 	private int screenHeight;
 	
-	private Button allUp;
-	private Button allDown;
+	private ImageView allUp;
+	private ImageView allDown;
 	private LevelFactory levelFactory;
 	private Level playingLevel;
 	
@@ -304,8 +303,8 @@ public class ClassicModeActivity extends Activity {
 	
 	private void getViewsRefferences(){
 		
-		allUp = (Button) findViewById(R.id.buttonUp);
-		allDown = (Button) findViewById(R.id.buttonDown);
+		allUp = (ImageView) findViewById(R.id.buttonUp);
+		allDown = (ImageView) findViewById(R.id.buttonDown);
 		currentRunTV = (TextView) findViewById(R.id.currentRun);
 		bestRunTV = (TextView) findViewById(R.id.bestRun);
 		targetNumber = (TextView) findViewById(R.id.targetNumberTextView);
@@ -322,6 +321,16 @@ public class ClassicModeActivity extends Activity {
 		params.rightMargin = 5;
 		backButton.setLayoutParams(params);
 		nextLevelButton.setLayoutParams(params);
+		
+		params = new LinearLayout.LayoutParams(screenWidth/8, screenHeight/10);
+		params.gravity = Gravity.CENTER_HORIZONTAL;
+		params.bottomMargin = 5;
+		allUp.setLayoutParams(params);
+
+		params = new LinearLayout.LayoutParams(screenWidth/8, screenHeight/10);
+		params.gravity = Gravity.CENTER_HORIZONTAL;
+		params.topMargin = 5;
+		allDown.setLayoutParams(params);
 		
 		allUp.setOnClickListener(new View.OnClickListener() {
 			
