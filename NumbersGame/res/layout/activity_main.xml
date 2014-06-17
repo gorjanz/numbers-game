@@ -19,6 +19,7 @@
             android:id="@+id/targetNumberTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
             android:hint="@string/startingTargetNumber"
             android:textColor="@color/Black"
             android:textColorHint="@color/Red"
