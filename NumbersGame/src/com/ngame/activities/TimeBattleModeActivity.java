@@ -263,6 +263,8 @@ public class TimeBattleModeActivity extends Activity {
 
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(screenWidth / 8, screenHeight / 10);
 		params.gravity = Gravity.RIGHT;
+		params.bottomMargin = 5;
+		params.rightMargin = 5;
 		nextLevelButton.setLayoutParams(params);
 		backButton.setLayoutParams(params);
 
