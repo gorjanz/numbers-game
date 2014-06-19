@@ -77,7 +77,7 @@ public class TimeBattleModeActivity extends Activity {
 		screenHeight = display.getHeight();
 		initializeFlipViews();
 
-		loadGameState();
+		//loadGameState();
 
 		initializeDrawables();
 		levelFactory = new TimerLevelsFactory(getApplicationContext());
@@ -85,9 +85,9 @@ public class TimeBattleModeActivity extends Activity {
 		nextLevel();
 		initializeViews();
 
-		loadUIState();
+		//loadUIState();
 		
-		timer = new CountDownTimer(TIMER_LENGTH*1000, 1000) { // adjust the milli seconds here
+		timer = new CountDownTimer(TIMER_LENGTH*1000, 1000) {
 
 	        public void onTick(long millisUntilFinished) {
 	        	
@@ -111,30 +111,6 @@ public class TimeBattleModeActivity extends Activity {
 	     }.start();
 
 		// setFlipViewsDrawables(playingLevel.getGameNum());
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-
-		saveGameState();
-		saveUIState();
-
-	}
-
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-
-		loadGameState();
-		loadUIState();
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		saveGameState();
-		saveUIState();
 	}
 
 	private void initializeFlipViews() {
@@ -307,8 +283,8 @@ public class TimeBattleModeActivity extends Activity {
 			public void onClick(View v) {
 
 				timer.cancel();
-				saveGameState();
-				saveUIState();
+//				saveGameState();
+//				saveUIState();
 				finish();
 
 				
