@@ -300,11 +300,17 @@ public class TimeBattleModeActivity extends Activity {
 				// saveGameState();
 			}
 		});
+		
+		int targetNumberSize = screenWidth/12;
 
 		Typeface tf = Typeface.createFromAsset(getAssets(),
 				"fonts/Origicide.ttf");
 		targetNumber.setTypeface(tf);
 		targetNumber.setText("Target: " + playingLevel.getTargetNum());
+		if(targetNumberSize < 50)
+			targetNumber.setTextSize(targetNumberSize);
+		else
+			targetNumber.setTextSize(50);
 		timerView.setTypeface(tf);
 		
 		targetNumber.requestLayout();

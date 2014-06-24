@@ -46,6 +46,8 @@ public class ClassicModeActivity extends Activity {
 	public static final String CURRENT_NUMBER_OF_MOVES = "CURRENT_NUMBER_OF_MOVES";
 	public static final String NO_MORE_LEVELS = "NO_MORE_LEVELS";
 	public static final String READY_FOR_NEXT_LEVEL = "READY_FOR_NEXT_LEVEL";
+	public static final String MOVES_REMAINING = "MOVES_REMAINING";
+	public static final String WANT_TO_USE_GPGS = "WANT_TO_USE_GPGS";
 	
 	private Integer currentDigit1;
 	private Integer currentDigit2;
@@ -62,6 +64,7 @@ public class ClassicModeActivity extends Activity {
 	private TextView currentRunTV;
 	private TextView bestRunTV;
 	private TextView targetNumber;
+	private TextView remainingMoves;
 	private ImageView backButton;
 	private ImageView nextLevelButton;
 	
@@ -71,6 +74,7 @@ public class ClassicModeActivity extends Activity {
 	private int bestRun;
 	private int movesUsed;
 	private int gamesPlayed;
+	private int movesRemaining;
 	private boolean readyForNextLevel;
 	
 	private int screenWidth;
@@ -129,6 +133,7 @@ public class ClassicModeActivity extends Activity {
 		Log.e(TAG, playingLevel.getGameNum());
 		
 		setFlipViewsDrawables(playingLevel.getGameNum());
+		movesRemaining = playingLevel.getMinMoves();
 		saveUIState();
 	}
 	
@@ -163,7 +168,11 @@ public class ClassicModeActivity extends Activity {
 			    Games.Achievements.increment(mHelper.getApiClient(), getResources().getString(R.string.played_hundred_games), gamesPlayed);
 			}
 			else {
-				Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
+				if(getGPGSReminderPrefference()){
+					Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
+					cancelGPGSReminder();
+				}
+
 			}
 		}
 		
@@ -310,6 +319,7 @@ public class ClassicModeActivity extends Activity {
 		targetNumber = (TextView) findViewById(R.id.targetNumberTextView);
 		backButton = (ImageView) findViewById(R.id.back);
 		nextLevelButton = (ImageView) findViewById(R.id.nextLevel);
+		remainingMoves = (TextView) findViewById(R.id.remainingMoves);
 	}
 	
 	private void initializeViews(){
@@ -369,19 +379,29 @@ public class ClassicModeActivity extends Activity {
 		
 		disableNextLevel();
 		
+		int targetNumberSize = screenWidth/12;
+		
 		Typeface tf = Typeface.createFromAsset(getAssets(),
 	            "fonts/Origicide.ttf");
 		currentRunTV.setTypeface(tf);
 		bestRunTV.setTypeface(tf);
 		targetNumber.setTypeface(tf);
+		remainingMoves.setTypeface(tf);
+		if(targetNumberSize < 50)
+			targetNumber.setTextSize(targetNumberSize);
+		else
+			targetNumber.setTextSize(50);
+		remainingMoves.setTextSize(screenWidth/20);
 		targetNumber.setText("Target: " + playingLevel.getTargetNum());
 		currentRunTV.setText("Current: " + Integer.toString(currentRun));
 		bestRunTV.setText("Best: " + Integer.toString(bestRun));
+		remainingMoves.setText("Moves remaining: " + playingLevel.getMinMoves());
 		
 		currentRunTV.requestLayout();
 		bestRunTV.requestLayout();
 		targetNumber.requestLayout();
 		backButton.requestLayout();
+		remainingMoves.requestLayout();
 	}
 	
 	private void flip(int whichDigit, boolean up){
@@ -526,6 +546,7 @@ public class ClassicModeActivity extends Activity {
 		}
 		setFlipViewsDrawables(playingLevel.getGameNum());
 		movesUsed = 0;
+		movesRemaining = playingLevel.getMinMoves();
 		disableNextLevel();
 		readyForNextLevel = false;
 	}
@@ -572,6 +593,7 @@ public class ClassicModeActivity extends Activity {
 		currentRunTV.setText("Current: " + Integer.toString(currentRun));
 		bestRunTV.setText("Best: " + Integer.toString(bestRun));
 		targetNumber.setText("Target: " + playingLevel.getTargetNum());
+		remainingMoves.setText("Moves remaining: " + movesRemaining);
 		//setFlipViewsDrawables(playingLevel.getGameNum());
 	}
 
@@ -593,7 +615,10 @@ public class ClassicModeActivity extends Activity {
 				Games.Achievements.unlock(mHelper.getApiClient(), getResources().getString(R.string.reached_level_two));
 			}
 			else {
-				Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
+				if(getGPGSReminderPrefference()){
+					Toast.makeText(getApplicationContext(), getResources().getString(R.string.sign_in_why), Toast.LENGTH_SHORT).show();
+					cancelGPGSReminder();
+				}
 			}
 			
 			break;
@@ -605,7 +630,10 @@ public class ClassicModeActivity extends Activity {
 				Games.Achievements.unlock(mHelper.getApiClient(), getResources().getString(R.string.reached_level_three));
 			}
 			else {
-				Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
+				if(getGPGSReminderPrefference()){
+					Toast.makeText(getApplicationContext(), getResources().getString(R.string.sign_in_why), Toast.LENGTH_SHORT).show();
+					cancelGPGSReminder();
+				}
 			}
 			break;
 			
@@ -615,7 +643,10 @@ public class ClassicModeActivity extends Activity {
 				Games.Achievements.unlock(mHelper.getApiClient(), getResources().getString(R.string.reached_level_four));
 			}
 			else {
-				Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
+				if(getGPGSReminderPrefference()){
+					Toast.makeText(getApplicationContext(), getResources().getString(R.string.sign_in_why), Toast.LENGTH_SHORT).show();
+					cancelGPGSReminder();
+				}
 			}
 			
 			break;
@@ -626,7 +657,10 @@ public class ClassicModeActivity extends Activity {
 				Games.Achievements.unlock(mHelper.getApiClient(), getResources().getString(R.string.reached_level_five));
 			}
 			else {
-				Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
+				if(getGPGSReminderPrefference()){
+					Toast.makeText(getApplicationContext(), getResources().getString(R.string.sign_in_why), Toast.LENGTH_SHORT).show();
+					cancelGPGSReminder();
+				}
 			}
 			
 			break;
@@ -638,14 +672,9 @@ public class ClassicModeActivity extends Activity {
 	 * After each move, check if the flip-number is equal to the target number which will end the current game
 	 */
 	private void checkGameOver(){
-		
-//		
-//		if (mHelper.isSignedIn()) {
-//			Games.Achievements.unlock(mHelper.getApiClient(), "CgkI9d6mq5UEEAIQCA");
-//		}
-//		else {
-//			Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
-//		}
+
+		movesRemaining--;
+		remainingMoves.setText("Moves remaining: " + movesRemaining);
 		
 		movesUsed++;
 		
@@ -660,8 +689,10 @@ public class ClassicModeActivity extends Activity {
 						Games.Leaderboards.submitScore(mHelper.getApiClient(), getResources().getString(R.string.best_winning_run), bestRun);
 					}
 					else {
-						Toast.makeText(getApplicationContext(), getResources().getString(R.string.must_sign_in), Toast.LENGTH_SHORT).show();
-						
+						if(getGPGSReminderPrefference()){
+							Toast.makeText(getApplicationContext(), getResources().getString(R.string.sign_in_why), Toast.LENGTH_SHORT).show();
+							cancelGPGSReminder();
+						}
 					}
 					
 				}
@@ -677,6 +708,8 @@ public class ClassicModeActivity extends Activity {
 			gamesPlayed++;
 			enableNextLevel();
 			readyForNextLevel = true;
+			
+			
 			
 			//Games.Achievements.increment(getApiClient(), getResources().getString(R.string.played_hundred_games), 1);
 		}
@@ -694,6 +727,7 @@ public class ClassicModeActivity extends Activity {
 		prefsEditor.putInt(BEST_RUN, bestRun);
 		prefsEditor.putInt(CURRENT_NUMBER_OF_MOVES, movesUsed);
 		prefsEditor.putBoolean(READY_FOR_NEXT_LEVEL, readyForNextLevel);
+		//prefsEditor.putInt(MOVES_REMAINING, movesRemaining);
 		prefsEditor.commit();
 		
 	}
@@ -721,6 +755,7 @@ public class ClassicModeActivity extends Activity {
 		bestRun = prefs.getInt(BEST_RUN, 0);
 		movesUsed = prefs.getInt(CURRENT_NUMBER_OF_MOVES, 0);
 		readyForNextLevel = prefs.getBoolean(READY_FOR_NEXT_LEVEL, true);
+		//movesRemaining = prefs.getInt(MOVES_REMAINING, defValue)
 		
 	}
 	
@@ -775,4 +810,15 @@ public class ClassicModeActivity extends Activity {
 		
 	}
 	
+	
+	private void cancelGPGSReminder(){
+		SharedPreferences.Editor prefsEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+		prefsEditor.putBoolean(WANT_TO_USE_GPGS, false);
+		prefsEditor.commit();
+	}
+	
+	private boolean getGPGSReminderPrefference(){
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		return prefs.getBoolean(WANT_TO_USE_GPGS, true);
+	}
 }
